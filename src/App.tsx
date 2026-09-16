@@ -8,27 +8,38 @@ import {
   Quote, 
   Volume2, 
   ChevronRight,
-  Headphones
+  Headphones,
+  Wand2
 } from 'lucide-react';
 import { POEMAS, AUTOR_INFO } from './data/poemas';
 import type { Poema } from './data/poemas';
+import type { GeneratedNotebook } from './data/notebookTypes';
+import { getNotebooksForPoem, getLatestNotebookForPoem } from './utils/notebookStorage';
 import { Navbar } from './components/Navbar';
 import { AudioPlayer } from './components/AudioPlayer';
 import { TextViewer } from './components/TextViewer';
 import { BookViewer } from './components/BookViewer';
 import { VideoPlayer } from './components/VideoPlayer';
+import { NotebookStudio } from './components/NotebookStudio';
 
 export function App() {
   const [currentView, setCurrentView] = useState<'home' | 'poem' | 'author'>('home');
   const [selectedPoem, setSelectedPoem] = useState<Poema>(POEMAS[0]);
   const [activeMode, setActiveMode] = useState<'texto' | 'cuaderno' | 'video'>('texto');
   
+  // Estado del Estudio Generativo de Cuadernos con IA
+  const [isStudioOpen, setIsStudioOpen] = useState<boolean>(false);
+  const [activeGeneratedNotebook, setActiveGeneratedNotebook] = useState<GeneratedNotebook | null>(() => 
+    getLatestNotebookForPoem(POEMAS[0].id)
+  );
+
   // Estado del Reproductor de Audio Global Persistente
   const [audioPoem, setAudioPoem] = useState<Poema | null>(POEMAS[0]);
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
 
   const handleOpenPoem = (poema: Poema, initialMode: 'texto' | 'cuaderno' | 'video' = 'texto') => {
     setSelectedPoem(poema);
+    setActiveGeneratedNotebook(getLatestNotebookForPoem(poema.id));
     setActiveMode(initialMode);
     setCurrentView('poem');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -113,6 +124,17 @@ export function App() {
                     >
                       <Headphones size={18} />
                       <span>{isPlayingAudio ? "Pausar Declamación" : "Escuchar Voz de Guille"}</span>
+                    </button>
+
+                    <button 
+                      className="btn btn-studio-sparkle"
+                      onClick={() => {
+                        handleOpenPoem(selectedPoem, 'cuaderno');
+                        setIsStudioOpen(true);
+                      }}
+                    >
+                      <Wand2 size={18} />
+                      <span>Taller de Cuadernos IA</span>
                     </button>
                   </div>
                 </div>
@@ -256,8 +278,14 @@ export function App() {
                 >
                   <BookOpen size={18} />
                   <span>
-                    Cuaderno Gráfico {selectedPoem.hasNotebook ? `(${selectedPoem.notebookPages.length} págs)` : '(Escenas)'}
+                    Cuaderno Gráfico {activeGeneratedNotebook ? `(IA: ${activeGeneratedNotebook.plates.length} lám)` : (selectedPoem.hasNotebook ? `(${selectedPoem.notebookPages.length} págs)` : '')}
                   </span>
+                  {activeGeneratedNotebook && (
+                    <span className="tab-sparkle-pill">
+                      <Sparkles size={11} />
+                      IA
+                    </span>
+                  )}
                 </button>
 
                 <button 
@@ -268,6 +296,16 @@ export function App() {
                   <span>Película en Video</span>
                 </button>
               </div>
+
+              {/* Acceso directo al Taller IA */}
+              <button
+                className="btn-mode-quick-studio"
+                onClick={() => setIsStudioOpen(true)}
+                title="Abrir Taller de Creación con Inteligencia Artificial"
+              >
+                <Wand2 size={16} />
+                <span>Diseñar Cuaderno con IA</span>
+              </button>
             </div>
 
             {/* Contenido según el Modo Activo */}
@@ -280,7 +318,13 @@ export function App() {
             )}
 
             {activeMode === 'cuaderno' && (
-              <BookViewer poema={selectedPoem} />
+              <BookViewer 
+                poema={selectedPoem}
+                generatedNotebook={activeGeneratedNotebook}
+                availableNotebooks={getNotebooksForPoem(selectedPoem.id)}
+                onOpenStudio={() => setIsStudioOpen(true)}
+                onSelectNotebook={(nb) => setActiveGeneratedNotebook(nb)}
+              />
             )}
 
             {activeMode === 'video' && (
@@ -289,6 +333,17 @@ export function App() {
           </div>
         )}
       </main>
+
+      {/* MODAL DEL ESTUDIO GENERATIVO DE CUADERNOS POÉTICOS */}
+      <NotebookStudio
+        poema={selectedPoem}
+        isOpen={isStudioOpen}
+        onClose={() => setIsStudioOpen(false)}
+        onNotebookCreated={(newNotebook) => {
+          setActiveGeneratedNotebook(newNotebook);
+          setActiveMode('cuaderno');
+        }}
+      />
 
       {/* FOOTER */}
       <footer className="site-footer">

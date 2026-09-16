@@ -169,6 +169,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #fff;
+  white-space: nowrap;
 }
 
 .brand-subtitle {
@@ -176,6 +177,7 @@ body {
   color: var(--gold-primary);
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .nav-links {
@@ -1136,4 +1138,1566 @@ body {
   font-size: 0.85rem;
   color: var(--text-dim);
 }
+
+/* ==========================================================================
+   ESTUDIO GENERATIVO DE CUADERNOS POÉTICOS CON IA & LÁMINAS DE COLECCIÓN
+   ========================================================================== */
+
+/* Botón Destacado en Hero */
+.btn-studio-sparkle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(138, 43, 226, 0.2) 100%);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-light);
+  font-weight: 600;
+  padding: 0.75rem 1.4rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+  transition: var(--transition-smooth);
+}
+
+.btn-studio-sparkle:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.4) 0%, rgba(138, 43, 226, 0.35) 100%);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.45);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+/* Selector de Modos y Botón Rápido del Taller */
+.mode-tabs-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.btn-mode-quick-studio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px dashed var(--gold-primary);
+  border-radius: 0.5rem;
+  color: var(--gold-light);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-mode-quick-studio:hover {
+  background: var(--gold-primary);
+  color: #000;
+  border-style: solid;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.tab-sparkle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 1rem;
+  color: var(--gold-light);
+  margin-left: 0.3rem;
+}
+
+/* Modal Overlay & Contenedor */
+.studio-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(8, 7, 11, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.studio-modal-container {
+  background: var(--cosmos-surface);
+  border: 1px solid var(--cosmos-border);
+  border-radius: 1.25rem;
+  max-width: 880px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.95), 0 0 40px rgba(212, 175, 55, 0.15);
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.studio-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.studio-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 0.35rem 0.85rem;
+  border-radius: 2rem;
+  color: var(--gold-light);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.btn-modal-close {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-modal-close:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.studio-modal-title-row {
+  margin-bottom: 2rem;
+}
+
+.studio-modal-title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.studio-modal-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Secciones del Formulario */
+.studio-section {
+  margin-bottom: 2rem;
+}
+
+.studio-section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  color: var(--gold-light);
+  margin-bottom: 1rem;
+  letter-spacing: 0.04em;
+}
+
+/* Cuadrícula de Estilos Artísticos */
+.styles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.style-card {
+  background: var(--cosmos-surface-elevated);
+  border: 1.5px solid rgba(212, 175, 55, 0.15);
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.style-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.style-card.selected {
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, var(--cosmos-surface-elevated) 100%);
+}
+
+.style-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.style-badge-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid;
+  padding: 0.2rem 0.55rem;
+  border-radius: 1rem;
+}
+
+.style-check-icon {
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.style-card-name {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.style-card-tagline {
+  font-size: 0.82rem;
+  color: var(--gold-dim);
+  font-style: italic;
+  margin-bottom: 0.6rem;
+}
+
+.style-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Área de Notas Creativas del Usuario */
+.studio-notes-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.studio-notes-textarea {
+  width: 100%;
+  background: var(--cosmos-surface-elevated);
+  border: 1px solid var(--cosmos-border);
+  border-radius: 0.65rem;
+  padding: 1rem;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: var(--transition-smooth);
+}
+
+.studio-notes-textarea:focus {
+  outline: none;
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.studio-notes-hint {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+/* Selector de Cantidad de Láminas */
+.plates-count-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.count-btn {
+  background: var(--cosmos-surface-elevated);
+  border: 1.5px solid var(--cosmos-border);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.count-btn:hover {
+  border-color: var(--gold-primary);
+}
+
+.count-btn.active {
+  border-color: var(--gold-primary);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(20, 18, 25, 0.8) 100%);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.count-title {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--gold-light);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.count-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Vista Previa de Estrofas */
+.verses-preview-list {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.65rem;
+  padding: 0.75rem 1rem;
+  max-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.verse-preview-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 0.4rem;
+}
+
+.verse-preview-num {
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  color: var(--gold-primary);
+  white-space: nowrap;
+}
+
+.verse-preview-text {
+  font-family: var(--font-poem);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* Pie de Acciones del Modal */
+.studio-actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-generate-notebook {
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+}
+
+/* ESTADO DE GENERACIÓN ACTIVA */
+.studio-generating-container {
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.generating-icon-pulse {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+  50% { transform: scale(1.08); box-shadow: 0 0 35px rgba(212, 175, 55, 0.45); }
+  100% { transform: scale(1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+}
+
+.sparkle-anim {
+  color: var(--gold-light);
+  animation: rotateSparkle 8s linear infinite;
+}
+
+@keyframes rotateSparkle {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.generating-title {
+  font-family: var(--font-title);
+  font-size: 1.7rem;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.generating-style-info {
+  font-size: 0.95rem;
+  color: var(--gold-light);
+  margin-bottom: 2.5rem;
+}
+
+.progress-bar-wrapper {
+  width: 100%;
+  max-width: 550px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  margin-bottom: 0.85rem;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim) 0%, var(--gold-primary) 50%, var(--gold-light) 100%);
+  border-radius: 1rem;
+  transition: width 0.4s ease-out;
+  box-shadow: 0 0 15px var(--gold-primary);
+}
+
+.progress-details-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 550px;
+  margin-bottom: 2.5rem;
+}
+
+.progress-status-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.spin-loader {
+  animation: spin 1s linear infinite;
+  color: var(--gold-primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.progress-percentage {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.generating-previews-area {
+  width: 100%;
+  max-width: 580px;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.previews-title {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold-primary);
+  margin-bottom: 0.75rem;
+}
+
+.previews-strip {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.preview-mini-card {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--gold-primary);
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.preview-mini-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-mini-badge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  font-size: 0.65rem;
+  color: #fff;
+  text-align: center;
+  padding: 0.15rem;
+}
+
+/* ==========================================================================
+   ESTILOS MEJORADOS DE BOOKVIEWER (LÁMINA EDITORIAL IA & FACSÍMIL)
+   ========================================================================== */
+
+/* Barra Superior del Visor */
+.notebook-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.notebook-source-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-source-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-source-toggle.active {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+}
+
+.notebook-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.notebook-history-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--cosmos-border);
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+.notebook-select-input {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.notebook-select-input option {
+  background: var(--cosmos-surface);
+  color: var(--text-main);
+}
+
+.btn-create-another-notebook {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(20, 18, 25, 0.8) 100%);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-light);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-create-another-notebook:hover {
+  background: var(--gold-primary);
+  color: #000;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Banner de Invitación al Taller cuando no hay láminas */
+.notebook-ai-hero-banner {
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, var(--cosmos-surface-elevated) 100%);
+  border: 1.5px dashed var(--gold-primary);
+  border-radius: 1.25rem;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8);
+}
+
+.ai-hero-icon-box {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.gold-icon-glow {
+  color: var(--gold-light);
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+.ai-hero-title {
+  font-family: var(--font-title);
+  font-size: 1.7rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai-hero-desc {
+  font-size: 0.98rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 2rem;
+}
+
+.btn-cta-studio {
+  padding: 0.9rem 2rem;
+  font-size: 1.05rem;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.35);
+}
+
+/* Tarjeta Editorial de Lámina de Colección IA */
+.ai-plate-editorial-card {
+  max-width: 720px;
+  width: 100%;
+  background: #0d0c10;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 0.85rem;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 0 30px rgba(212, 175, 55, 0.1);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-plate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.plate-edition-tag {
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  color: var(--gold-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.plate-book-title {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.ai-plate-image-frame {
+  width: 100%;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+}
+
+.ai-plate-img {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  object-fit: contain;
+  display: block;
+  filter: contrast(1.04) brightness(0.98);
+}
+
+.ai-plate-text-container {
+  padding: 2rem 2.5rem 1.8rem;
+  background: linear-gradient(180deg, #121017 0%, #0d0c10 100%);
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  position: relative;
+}
+
+.ai-plate-quote-mark {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--gold-primary);
+  opacity: 0.3;
+  position: absolute;
+  top: 0.5rem;
+  left: 1.25rem;
+}
+
+.ai-plate-verse {
+  font-family: var(--font-poem);
+  font-size: 1.45rem;
+  font-style: italic;
+  color: var(--gold-light);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  white-space: pre-line;
+}
+
+.ai-plate-author {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+}
+
+.ai-plate-metadata-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.meta-tag {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.user-direction-tag {
+  color: var(--gold-primary);
+  border-color: rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+/* Tira de Miniaturas Inferior */
+.notebook-thumbnails-strip {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.thumb-btn {
+  width: 4rem;
+  height: 5rem;
+  border-radius: 0.45rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #000;
+  cursor: pointer;
+  position: relative;
+  opacity: 0.6;
+  transition: var(--transition-smooth);
+}
+
+.thumb-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.thumb-btn.active {
+  border: 2px solid var(--gold-primary);
+  opacity: 1;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.35);
+  transform: translateY(-3px);
+}
+
+.thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-num {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.85);
+  font-family: var(--font-title);
+  font-size: 0.65rem;
+  color: var(--gold-light);
+  text-align: center;
+  padding: 0.1rem;
+}
+
+/* ==========================================================================
+   DISEÑO EDITORIAL: LIBRO ABIERTO REALISTA (OPEN FLIPBOOK SPREAD)
+   ========================================================================== */
+
+.open-book-viewport {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0.5rem;
+  perspective: 2000px;
+}
+
+/* Botones flotantes de paso de página al borde del libro */
+.book-page-turn-touch {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: rgba(18, 16, 23, 0.85);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 25;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.25);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(8px);
+}
+
+.book-page-turn-touch.left-turn {
+  left: -1rem;
+}
+
+.book-page-turn-touch.right-turn {
+  right: -1rem;
+}
+
+.book-page-turn-touch:hover:not(:disabled) {
+  background: var(--gold-primary);
+  color: #0d0c11;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.6);
+}
+
+.book-page-turn-touch:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-dim);
+}
+
+/* Estructura del Libro Abierto (Doble Página) */
+.open-book-spread {
+  width: 100%;
+  max-width: 1040px;
+  display: grid;
+  grid-template-columns: 1fr 14px 1fr;
+  background: #141118;
+  border-radius: 0.9rem;
+  position: relative;
+  box-shadow: 
+    0 30px 80px -15px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(212, 175, 55, 0.3),
+    0 0 50px rgba(212, 175, 55, 0.12);
+  padding: 14px;
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Canto exterior de la encuadernación en tapa dura */
+.book-hardcover-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.9rem;
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  background: linear-gradient(135deg, #221c27 0%, #100d14 100%);
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Hoja del Libro (Izquierda y Derecha) */
+.book-leaf-page {
+  position: relative;
+  z-index: 2;
+  background: #fdfbf7;
+  min-height: 580px;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(180, 150, 100, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.book-leaf-page.page-verso {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.book-leaf-page.page-recto {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Textura sutil de papel pergamino */
+.page-parchment-texture {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(240, 230, 210, 0.6) 0%, transparent 60%),
+    radial-gradient(circle at 90% 80%, rgba(230, 215, 190, 0.5) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Sombra y curvatura tridimensional en el lomo central */
+.page-spine-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.page-spine-shadow.shadow-left {
+  right: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.08) 45%, transparent 100%);
+}
+
+.page-spine-shadow.shadow-right {
+  left: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.08) 45%, transparent 100%);
+}
+
+/* Lomo central de encuadernación */
+.book-spine-binding {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #1a151f 0%, #0d0a10 50%, #1a151f 100%);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9);
+}
+
+.spine-deep-crease {
+  width: 2px;
+  height: 94%;
+  background: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
+}
+
+/* Contenedor interior de cada página */
+.page-content-wrapper {
+  position: relative;
+  z-index: 4;
+  padding: 2.2rem 2.5rem;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Encabezados y números de folio */
+.book-page-top-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(130, 100, 60, 0.2);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.collection-header, .poem-header-title {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7a6b5a;
+}
+
+.page-number-folio {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: #8c7355;
+  font-style: italic;
+}
+
+/* Paspartú y Marco de la Lámina Ilustrada (Página Izquierda) */
+.book-plate-paspartu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-art-frame {
+  width: 100%;
+  max-height: 410px;
+  background: #110e14;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(212, 175, 55, 0.4),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.book-plate-img {
+  width: 100%;
+  height: 100%;
+  max-height: 390px;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+  filter: contrast(1.05) brightness(0.98);
+}
+
+.book-plate-subcaption {
+  margin-top: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.caption-edition {
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  color: #a47834;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.caption-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #382e25;
+}
+
+/* Manuscrito facsímil en página izquierda */
+.book-manuscript-frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.manuscript-img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  filter: contrast(1.05);
+}
+
+.manuscript-caption {
+  margin-top: 0.8rem;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  color: #7a6b5a;
+  text-align: center;
+}
+
+/* Página Derecha (Versos Poéticos) */
+.book-poetic-page-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.poem-stanza-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Letra Capitular Ornamental */
+.dropcap-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.4rem;
+}
+
+.ornamental-dropcap {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  line-height: 0.85;
+  color: #9d752c;
+  float: left;
+  margin-right: 0.6rem;
+  margin-bottom: -0.2rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.lead-verse-line {
+  font-family: var(--font-poem);
+  font-size: 1.35rem;
+  font-style: italic;
+  color: #211c18;
+  line-height: 1.6;
+  margin-top: 0.4rem;
+}
+
+.remaining-verses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.poetic-verse-line {
+  font-family: var(--font-poem);
+  font-size: 1.3rem;
+  font-style: italic;
+  color: #26201b;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Cierre poético y firma */
+.poem-footer-block {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.poetic-gold-divider {
+  color: #a47834;
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.poet-sign {
+  font-family: var(--font-title);
+  font-size: 0.82rem;
+  color: #635242;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.author-notes-tribute {
+  font-size: 0.75rem;
+  color: #8a735b;
+  font-style: italic;
+  max-width: 90%;
+  text-align: center;
+}
+
+/* Pie de página */
+.book-page-bottom-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(130, 100, 60, 0.15);
+  padding-top: 0.6rem;
+  margin-top: 1rem;
+}
+
+.leaf-ornament {
+  color: #b08d4a;
+  font-size: 0.8rem;
+}
+
+.book-imprint {
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  color: #8c7355;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Animación de paso de página */
+.open-book-spread.flip-next {
+  animation: pageTurnNext 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.open-book-spread.flip-prev {
+  animation: pageTurnPrev 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes pageTurnNext {
+  0% { transform: scale(1) rotateY(0deg); }
+  50% { transform: scale(0.98) rotateY(-3deg); filter: brightness(0.95); }
+  100% { transform: scale(1) rotateY(0deg); }
+}
+
+@keyframes pageTurnPrev {
+  0% { transform: scale(1) rotateY(0deg); }
+  50% { transform: scale(0.98) rotateY(3deg); filter: brightness(0.95); }
+  100% { transform: scale(1) rotateY(0deg); }
+}
+
+/* ==========================================================================
+   BANNER DE DISTRIBUCIÓN ARMÓNICA EDITORIAL
+   ========================================================================== */
+
+.harmonic-edition-banner {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(20, 18, 25, 0.6) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 0.65rem;
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.harmonic-icon-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  flex-shrink: 0;
+}
+
+.harmonic-text {
+  font-size: 0.92rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.harmonic-text strong {
+  color: var(--gold-light);
+  font-family: var(--font-title);
+  letter-spacing: 0.02em;
+}
+
+/* Versos de previsualización en el estudio */
+.verses-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.verse-preview-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.4rem;
+}
+
+.verse-preview-num {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  color: var(--gold-primary);
+  white-space: nowrap;
+}
+
+.verse-preview-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Responsividad para móviles y pantallas estrechas */
+@media (max-width: 900px) {
+  .open-book-spread {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+  .book-spine-binding {
+    display: none;
+  }
+  .page-spine-shadow {
+    display: none;
+  }
+  .book-leaf-page.page-verso {
+    border-radius: 0.4rem;
+    margin-bottom: 1rem;
+    min-height: auto;
+  }
+  .book-leaf-page.page-recto {
+    border-radius: 0.4rem;
+    min-height: auto;
+  }
+  .page-content-wrapper {
+    padding: 1.5rem;
+  }
+  .book-page-turn-touch {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+  .book-page-turn-touch.left-turn {
+    left: -0.5rem;
+  }
+  .book-page-turn-touch.right-turn {
+    right: -0.5rem;
+  }
+}
+
+/* ==========================================================================
+   OPTIMIZACIONES RESPONSIVAS MÓVILES (NAVBAR & REPRODUCTOR FLOTANTE)
+   ========================================================================== */
+
+/* Barra de progreso superior integrada (estilo miniplayer móvil) */
+.audio-mobile-top-bar {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.audio-mobile-top-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f3e5ab, #d4af37);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+  transition: width 0.15s linear;
+}
+
+@media (max-width: 768px) {
+  /* NAVBAR EN MÓVILES */
+  .site-navbar {
+    background: rgba(11, 10, 14, 0.95);
+  }
+
+  .nav-wrapper {
+    height: 3.8rem;
+    padding: 0 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .brand-logo {
+    gap: 0.6rem;
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .brand-symbol {
+    width: 2.15rem;
+    height: 2.15rem;
+    min-width: 2.15rem;
+  }
+
+  .brand-title-group {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .brand-title {
+    font-size: clamp(0.85rem, 3.8vw, 1.05rem);
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .brand-subtitle {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-links {
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .nav-link {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    gap: 0.3rem;
+  }
+
+  /* Ocultar el badge "Edición Multimedia" en móviles para dar espacio completo al título */
+  .nav-item-badge {
+    display: none !important;
+  }
+
+  /* REPRODUCTOR FLOTANTE EN MÓVILES */
+  .floating-audio-player {
+    width: calc(100% - 1.25rem);
+    max-width: 500px;
+    bottom: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    gap: 0.5rem;
+    border-radius: 0.85rem;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .audio-mobile-top-bar {
+    display: block;
+  }
+
+  .audio-track-info {
+    min-width: 0;
+    flex: 1;
+    gap: 0.55rem;
+    overflow: hidden;
+  }
+
+  .audio-track-avatar {
+    width: 2.3rem;
+    height: 2.3rem;
+    min-width: 2.3rem;
+  }
+
+  .audio-track-title {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .audio-track-artist {
+    font-size: 0.68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .audio-controls {
+    flex-grow: 0;
+    max-width: none;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  /* En móviles se oculta la caja ancha de tiempo para que todo quepa al 100% */
+  .audio-timeline-box {
+    display: none;
+  }
+
+  .btn-audio-play {
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+
+  .btn-audio-close {
+    padding: 0.25rem;
+  }
+
+  .audio-extra-actions {
+    gap: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  /* Ocultar botón de silencio en móviles (se usan los botones físicos del teléfono) */
+  .audio-extra-actions button:first-child {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-wrapper {
+    padding: 0 0.5rem;
+    gap: 0.3rem;
+  }
+
+  .brand-symbol {
+    width: 1.85rem;
+    height: 1.85rem;
+    min-width: 1.85rem;
+  }
+
+  .brand-title {
+    font-size: 0.8rem;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .nav-link span {
+    display: none;
+  }
+
+  .nav-link {
+    padding: 0.35rem;
+  }
+}
+
 

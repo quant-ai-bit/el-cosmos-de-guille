@@ -80,6 +80,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         onLoadedMetadata={handleTimeUpdate}
       />
 
+      {/* Barra de progreso superior integrada (estilo miniplayer móvil) */}
+      <div className="audio-mobile-top-bar" onClick={handleSeek}>
+        <div 
+          className="audio-mobile-top-fill" 
+          style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+        />
+      </div>
+
       <div className="audio-track-info">
         <div className="audio-track-avatar">
           <img src={AUTOR_INFO.fotoAutorUrl} alt={AUTOR_INFO.nombre} />
