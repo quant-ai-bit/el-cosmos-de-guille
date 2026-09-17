@@ -3,27 +3,41 @@ import type { GeneratedNotebook } from '../data/notebookTypes';
 import type { Poema } from '../data/poemas';
 
 /**
- * Convierte cualquier URL o imagen en un DataURL base64 para embeber en el PDF
+ * Convierte y comprime cualquier URL o imagen en un DataURL optimizado para PDF
+ * Evita que el archivo PDF sea gigantesco reduciendo cada imagen a ~600px a 80% de calidad.
  */
 async function loadImageDataUrl(url: string): Promise<string> {
-  if (url.startsWith('data:')) {
-    return url;
-  }
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       try {
+        const maxDim = 600;
+        let width = img.naturalWidth || 600;
+        let height = img.naturalHeight || 600;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
         const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth || 800;
-        canvas.height = img.naturalHeight || 800;
+        canvas.width = width;
+        canvas.height = height;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
           reject(new Error('No canvas 2D context'));
           return;
         }
-        ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
+
+        ctx.drawImage(img, 0, 0, width, height);
+        // Calidad 0.8: óptima para nitidez visual sin inflar megabytes
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
       } catch (err) {
         reject(err);
       }
@@ -34,7 +48,7 @@ async function loadImageDataUrl(url: string): Promise<string> {
 }
 
 /**
- * Exporta un cuaderno poético completo a un documento PDF de calidad editorial
+ * Exporta un cuaderno poético completo a un documento PDF de calidad editorial optimizado en tamaño
  */
 export async function exportNotebookToPdf(
   notebook: GeneratedNotebook,
@@ -47,7 +61,8 @@ export async function exportNotebookToPdf(
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
-    format: 'a4'
+    format: 'a4',
+    compress: true
   });
 
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -148,7 +163,7 @@ export async function exportNotebookToPdf(
       doc.setLineWidth(0.4);
       doc.rect(imgX - 1, imgY - 1, imgSize + 2, imgSize + 2);
 
-      doc.addImage(imgData, 'JPEG', imgX, imgY, imgSize, imgSize);
+      doc.addImage(imgData, 'JPEG', imgX, imgY, imgSize, imgSize, undefined, 'FAST');
     } catch (e) {
       console.warn(`No se pudo embeber la imagen de la lámina ${i + 1} en el PDF:`, e);
       doc.setTextColor(180, 50, 50);
@@ -171,7 +186,6 @@ export async function exportNotebookToPdf(
     const lineHeight = 7.5;
 
     verseLines.forEach((line) => {
-      // Si la línea excede el ancho, partirla
       const wrapped = doc.splitTextToSize(line, pageWidth - 46);
       doc.text(wrapped, pageWidth / 2, verseY, { align: 'center' });
       verseY += wrapped.length * lineHeight;
@@ -209,7 +223,7 @@ export async function exportNotebookToPdf(
     'de Guillermo Baena Restrepo.',
     '',
     `Estilo visual: ${notebook.styleName}.`,
-    'Generado con tecnología de inteligencia artificial Google Imagen 3,',
+    'Ilustraciones con motivo poético de colección,',
     'respetando la cadencia y métrica original de los versos.'
   ];
 
@@ -227,8 +241,23 @@ export async function exportNotebookToPdf(
   doc.setTextColor(160, 145, 125);
   doc.text('Todos los derechos poéticos pertenecen a la familia Baena Restrepo.', pageWidth / 2, pageHeight - 20, { align: 'center' });
 
-  // Guardar archivo
+  // 4. DESCARGA SEGURA MEDIANTE BLOB NATIVO (Sin límites de tamaño de data-URI)
   onProgress?.(100, '¡Descargando archivo PDF!');
   const cleanTitle = poema.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  doc.save(`${cleanTitle}-cuaderno-editorial.pdf`);
+  const filename = `${cleanTitle}-cuaderno-editorial.pdf`;
+
+  try {
+    const pdfBlob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+  } catch (downloadErr) {
+    console.warn('Fallback a doc.save si URL.createObjectURL no está soportado:', downloadErr);
+    doc.save(filename);
+  }
 }
