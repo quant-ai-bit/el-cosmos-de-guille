@@ -85,7 +85,7 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
       const promises = plateDefinitions.map(async (def, i) => {
         await new Promise(res => setTimeout(res, i * 250));
         
-        const { imageUrl } = await generatePlateImageSmart(def.prompt, def.plateSeed, apiKey);
+        const { imageUrl } = await generatePlateImageSmart(def.prompt, def.plateSeed, apiKey, selectedStyle.id);
         
         const plate: GeneratedPlate = {
           id: `plate-${Date.now()}-${def.index}`,
@@ -124,14 +124,14 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
         seed: baseSeed
       };
 
-      // Guardar en almacenamiento híbrido (Local + Firestore)
-      await saveNotebook(newNotebook);
+      // Guardar en caché local y sincronizar con Firestore en segundo plano
+      saveNotebook(newNotebook).catch(err => console.warn('Aviso sincronización Firestore:', err));
 
       setTimeout(() => {
         setIsGenerating(false);
         onNotebookCreated(newNotebook);
         onClose();
-      }, 700);
+      }, 500);
 
     } catch (err: any) {
       console.error('Error durante la generación del cuaderno:', err);
@@ -397,7 +397,15 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
                 <div className="previews-strip">
                   {previewPlates.map((plate) => (
                     <div key={plate.id} className="preview-mini-card">
-                      <img src={plate.imageUrl} alt={`Página ${plate.plateNumber}`} />
+                      <img 
+                        src={plate.imageUrl} 
+                        alt={`Página ${plate.plateNumber}`} 
+                        loading="eager"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.style.opacity = '0.7';
+                        }}
+                      />
                       <div className="preview-mini-badge">Pág {plate.plateNumber}</div>
                     </div>
                   ))}
