@@ -86,68 +86,145 @@ export const NOTEBOOK_STYLES: NotebookStyle[] = [
 ];
 
 /**
- * Algoritmo Editorial de Distribución Armónica.
- * El número de páginas lo define el tamaño y la cadencia natural de los versos,
- * asegurando que cada lámina tenga un texto legible, elegante y proporcionado
- * (ni saturado ni vacío) en la página derecha del libro abierto.
+ * Algoritmo Editorial de Distribución Armónica y Cierre de Ideas Poéticas.
+ * Garantiza que el texto de cada página termine en punto (.) y nunca a la mitad de una idea,
+ * manteniendo una cadencia armónica, proporcionada y elegante (3 a 7 versos por hoja).
  */
 export function segmentPoemHarmonically(fullText: string): string[] {
   if (!fullText || !fullText.trim()) {
-    return ['Versos de Guillermo Baena Restrepo'];
+    return ['Versos de Guillermo Baena Restrepo.'];
   }
 
-  // 1. Si el poema ya viene estructurado en estrofas naturales (separadas por línea en blanco)
-  const naturalStanzas = fullText
-    .split(/\n\s*\n/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+  // Comprobar si un texto termina en punto o cierre de idea gramatical
+  const endsWithPeriod = (t: string) => {
+    const clean = t.trim();
+    return /[.!?…»"]$/.test(clean) || clean.endsWith('."') || clean.endsWith('.)');
+  };
 
-  if (naturalStanzas.length >= 2 && naturalStanzas.length <= 8) {
-    const pages: string[] = [];
-    for (const stanza of naturalStanzas) {
-      const lines = stanza.split('\n').map(l => l.trim()).filter(Boolean);
-      // Si una estrofa es muy extensa (> 7 versos), dividirla en mitades armónicas
-      if (lines.length > 7) {
-        const mid = Math.ceil(lines.length / 2);
-        pages.push(lines.slice(0, mid).join('\n'));
-        pages.push(lines.slice(mid).join('\n'));
-      } else {
-        pages.push(stanza);
-      }
-    }
-    return pages;
-  }
-
-  // 2. Si el poema es continuo o tiene pocos saltos (ej. El Mendigo, Los Abuelos)
-  const verses = fullText
+  // 1. Extraer los versos no vacíos del texto
+  const rawLines = fullText
     .split('\n')
-    .map(v => v.trim())
-    .filter(v => v.length > 0);
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
 
-  if (verses.length <= 3) {
-    return [verses.join('\n')];
+  if (rawLines.length === 0) {
+    return ['Versos de Guillermo Baena Restrepo.'];
   }
 
-  // Tamaño armónico ideal de versos por página (entre 3 y 5 versos por hoja)
-  let versesPerPage = 4;
-  if (verses.length <= 7) {
-    versesPerPage = 3;
-  } else if (verses.length <= 13) {
-    versesPerPage = 4; // Ej. 11 versos -> 3 páginas equilibradas (4 + 4 + 3)
-  } else if (verses.length <= 24) {
-    versesPerPage = 5;
-  } else {
-    versesPerPage = 6;
+  // Si todo el poema es muy breve (<= 4 versos)
+  if (rawLines.length <= 4) {
+    let single = rawLines.join('\n');
+    if (!endsWithPeriod(single)) single += '.';
+    return [single];
   }
 
-  const pages: string[] = [];
-  for (let i = 0; i < verses.length; i += versesPerPage) {
-    const chunk = verses.slice(i, i + versesPerPage);
-    // Si el último fragmento queda con un solo verso huérfano, fusionarlo con la página anterior
-    if (chunk.length === 1 && pages.length > 0) {
-      pages[pages.length - 1] += '\n' + chunk[0];
+  // 2. Agrupar versos en Unidades Semánticas / Ideas Completas
+  // Una unidad se acumula hasta encontrar un verso que termine en '.' (o '!', '?', '...')
+  const thoughtUnits: string[][] = [];
+  let currentUnit: string[] = [];
+
+  for (let i = 0; i < rawLines.length; i++) {
+    const line = rawLines[i];
+    currentUnit.push(line);
+
+    // Si termina en punto o es el último verso del poema
+    if (endsWithPeriod(line) || i === rawLines.length - 1) {
+      thoughtUnits.push(currentUnit);
+      currentUnit = [];
+    }
+  }
+
+  if (currentUnit.length > 0) {
+    if (thoughtUnits.length > 0) {
+      thoughtUnits[thoughtUnits.length - 1].push(...currentUnit);
     } else {
-      pages.push(chunk.join('\n'));
+      thoughtUnits.push(currentUnit);
+    }
+  }
+
+  // 2.1 Si alguna unidad semántica supera los 7 versos porque el texto original
+  // no incluyó puntos intermedios (ej. oraciones continuas puntuadas sólo con comas),
+  // se divide armónicamente en bloques equilibrados asegurando que cada corte culmine en punto.
+  for (let i = 0; i < thoughtUnits.length; i++) {
+    const unit = thoughtUnits[i];
+    if (unit.length > 7) {
+      const subUnits: string[][] = [];
+      let sub: string[] = [];
+      const targetSize = unit.length <= 10 ? Math.ceil(unit.length / 2) : 4;
+
+      for (let j = 0; j < unit.length; j++) {
+        let line = unit[j];
+        if (sub.length >= targetSize - 1 && j < unit.length - 1) {
+          if (/[,;:]$/.test(line)) {
+            line = line.slice(0, -1) + '.';
+          } else if (!endsWithPeriod(line)) {
+            line = line + '.';
+          }
+          sub.push(line);
+          subUnits.push(sub);
+          sub = [];
+        } else {
+          sub.push(line);
+        }
+      }
+      if (sub.length > 0) {
+        subUnits.push(sub);
+      }
+      thoughtUnits.splice(i, 1, ...subUnits);
+      i += subUnits.length - 1;
+    }
+  }
+
+  // 3. Empaquetar las Unidades Semánticas en Páginas Armónicas
+  // Cada página contendrá una o más ideas completas, garantizando SIEMPRE que termine en punto.
+  const pages: string[] = [];
+  let currentPageLines: string[] = [];
+
+  for (let i = 0; i < thoughtUnits.length; i++) {
+    const unit = thoughtUnits[i];
+    const unitLineCount = unit.length;
+    const currentLineCount = currentPageLines.length;
+
+    if (currentLineCount === 0) {
+      currentPageLines.push(...unit);
+      continue;
+    }
+
+    const combinedLineCount = currentLineCount + unitLineCount;
+    const currentChars = currentPageLines.join(' ').length;
+    const unitChars = unit.join(' ').length;
+
+    const fitsHarmoniously = (
+      combinedLineCount <= 6 && (currentChars + unitChars) <= 420
+    ) || (
+      currentLineCount <= 2 && combinedLineCount <= 7
+    );
+
+    if (fitsHarmoniously) {
+      currentPageLines.push(...unit);
+    } else {
+      let pageText = currentPageLines.join('\n');
+      if (!endsWithPeriod(pageText)) pageText += '.';
+      pages.push(pageText);
+      currentPageLines = [...unit];
+    }
+  }
+
+  // Cerrar la última página garantizando el punto final
+  if (currentPageLines.length > 0) {
+    let lastPageText = currentPageLines.join('\n');
+    if (!endsWithPeriod(lastPageText)) lastPageText += '.';
+
+    // Evitar que el último folio quede con un solo verso desolado si la anterior tiene espacio
+    if (currentPageLines.length === 1 && pages.length > 0) {
+      const prevPageLines = pages[pages.length - 1].split('\n');
+      if (prevPageLines.length <= 5) {
+        pages[pages.length - 1] += '\n' + lastPageText;
+      } else {
+        pages.push(lastPageText);
+      }
+    } else {
+      pages.push(lastPageText);
     }
   }
 
@@ -160,3 +237,4 @@ export function segmentPoemHarmonically(fullText: string): string[] {
 export function segmentPoemIntoPlates(fullText: string, _targetPlatesCount?: number): string[] {
   return segmentPoemHarmonically(fullText);
 }
+
