@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Play, 
   BookOpen, 
@@ -7,23 +7,26 @@ import {
   Sparkles, 
   Quote, 
   Volume2, 
-  ChevronRight,
-  Headphones,
-  Wand2
+  ChevronRight, 
+  Headphones, 
+  Wand2,
+  Library,
+  Layers
 } from 'lucide-react';
 import { POEMAS, AUTOR_INFO } from './data/poemas';
 import type { Poema } from './data/poemas';
 import type { GeneratedNotebook } from './data/notebookTypes';
-import { getNotebooksForPoem, getLatestNotebookForPoem } from './utils/notebookStorage';
+import { getNotebooksForPoem, getLatestNotebookForPoem, getAllNotebooks } from './utils/notebookStorage';
 import { Navbar } from './components/Navbar';
 import { AudioPlayer } from './components/AudioPlayer';
 import { TextViewer } from './components/TextViewer';
 import { BookViewer } from './components/BookViewer';
 import { VideoPlayer } from './components/VideoPlayer';
 import { NotebookStudio } from './components/NotebookStudio';
+import { NotebookGallery } from './components/NotebookGallery';
 
 export function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'poem' | 'author'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'poem' | 'author' | 'gallery'>('home');
   const [selectedPoem, setSelectedPoem] = useState<Poema>(POEMAS[0]);
   const [activeMode, setActiveMode] = useState<'texto' | 'cuaderno' | 'video'>('texto');
   
@@ -32,15 +35,32 @@ export function App() {
   const [activeGeneratedNotebook, setActiveGeneratedNotebook] = useState<GeneratedNotebook | null>(() => 
     getLatestNotebookForPoem(POEMAS[0].id)
   );
+  const [allNotebooksCount, setAllNotebooksCount] = useState<number>(0);
 
   // Estado del Reproductor de Audio Global Persistente
   const [audioPoem, setAudioPoem] = useState<Poema | null>(POEMAS[0]);
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
 
+  useEffect(() => {
+    getAllNotebooks().then((list) => {
+      if (list) {
+        setAllNotebooksCount(list.length);
+      }
+    });
+  }, []);
+
   const handleOpenPoem = (poema: Poema, initialMode: 'texto' | 'cuaderno' | 'video' = 'texto') => {
     setSelectedPoem(poema);
     setActiveGeneratedNotebook(getLatestNotebookForPoem(poema.id));
     setActiveMode(initialMode);
+    setCurrentView('poem');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenNotebookFromGallery = (poema: Poema, notebook: GeneratedNotebook) => {
+    setSelectedPoem(poema);
+    setActiveGeneratedNotebook(notebook);
+    setActiveMode('cuaderno');
     setCurrentView('poem');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -75,8 +95,9 @@ export function App() {
       <Navbar 
         currentView={currentView}
         onNavigateHome={() => { setCurrentView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        onNavigateGallery={() => { setCurrentView('gallery'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onNavigateAuthor={() => {
-          if (currentView === 'poem') setCurrentView('home');
+          if (currentView !== 'home') setCurrentView('home');
           setTimeout(() => {
             document.getElementById('autor-section')?.scrollIntoView({ behavior: 'smooth' });
           }, 100);
@@ -116,6 +137,17 @@ export function App() {
                     >
                       <BookOpen size={18} />
                       <span>Explorar Poemario</span>
+                    </button>
+
+                    <button 
+                      className="btn btn-outline"
+                      onClick={() => {
+                        setCurrentView('gallery');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      <Library size={18} />
+                      <span>Galería de Cuadernos ({allNotebooksCount})</span>
                     </button>
 
                     <button 
@@ -222,6 +254,58 @@ export function App() {
               </div>
             </section>
 
+            {/* SECCIÓN BANNER GALERÍA COMUNITARIA */}
+            <section className="gallery-banner-section">
+              <div className="site-container">
+                <div className="gallery-promo-box">
+                  <div className="gallery-promo-content">
+                    <div className="gallery-promo-badge">
+                      <Sparkles size={14} />
+                      <span>Biblioteca Digital & Descarga en PDF</span>
+                    </div>
+                    <h3 className="gallery-promo-title text-gold-gradient">
+                      Libros de Arte Ilustrados en la Galería
+                    </h3>
+                    <p className="gallery-promo-desc">
+                      Descubre todas las ediciones compuestas por los lectores con Google Imagen 3. Puedes hojear cada cuaderno en modo libro o descargarlo encuadernado en PDF de alta fidelidad editorial.
+                    </p>
+                    <div className="gallery-promo-actions">
+                      <button 
+                        className="btn btn-primary"
+                        onClick={() => {
+                          setCurrentView('gallery');
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                      >
+                        <Library size={18} />
+                        <span>Entrar a la Galería de Cuadernos</span>
+                      </button>
+                      <button 
+                        className="btn btn-outline"
+                        onClick={() => {
+                          handleOpenPoem(selectedPoem, 'cuaderno');
+                          setIsStudioOpen(true);
+                        }}
+                      >
+                        <Wand2 size={18} />
+                        <span>Crear Nueva Edición</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="gallery-promo-graphic">
+                    <div className="gallery-stacked-card card-1">
+                      <Layers size={32} style={{ color: 'var(--gold-primary)' }} />
+                      <span>PDF Editorial</span>
+                    </div>
+                    <div className="gallery-stacked-card card-2">
+                      <Sparkles size={28} style={{ color: 'var(--gold-light)' }} />
+                      <span>Google Imagen 3</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* SECCIÓN SOBRE EL POETA */}
             <section id="autor-section" className="author-section">
               <div className="site-container author-grid">
@@ -247,11 +331,24 @@ export function App() {
           </div>
         )}
 
+        {/* VISTA DE LA GALERÍA DE CUADERNOS */}
+        {currentView === 'gallery' && (
+          <NotebookGallery 
+            onOpenNotebook={handleOpenNotebookFromGallery}
+            onOpenStudioForPoem={(p) => {
+              setSelectedPoem(p);
+              setIsStudioOpen(true);
+            }}
+          />
+        )}
+
         {/* VISTA DETALLADA DEL POEMA (SELECTOR DE TRES MODOS) */}
         {currentView === 'poem' && (
           <div className="site-container poem-view-container">
             <div className="poem-breadcrumbs">
               <a onClick={() => setCurrentView('home')}>← Volver al Poemario</a>
+              <span>/</span>
+              <a onClick={() => setCurrentView('gallery')}>Galería de Cuadernos</a>
               <span>/</span>
               <span style={{ color: 'var(--gold-light)' }}>{selectedPoem.title}</span>
             </div>
@@ -371,4 +468,3 @@ export function App() {
 }
 
 export default App;
-

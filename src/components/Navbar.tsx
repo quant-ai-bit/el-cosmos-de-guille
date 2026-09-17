@@ -1,14 +1,20 @@
 import React from 'react';
-import { Feather, BookOpen, User, Sparkles } from 'lucide-react';
+import { Feather, BookOpen, User, Sparkles, Library } from 'lucide-react';
 import { AUTOR_INFO } from '../data/poemas';
 
 interface NavbarProps {
-  currentView: 'home' | 'poem' | 'author';
+  currentView: 'home' | 'poem' | 'author' | 'gallery';
   onNavigateHome: () => void;
   onNavigateAuthor: () => void;
+  onNavigateGallery: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigateHome, onNavigateAuthor }) => {
+export const Navbar: React.FC<NavbarProps> = ({ 
+  currentView, 
+  onNavigateHome, 
+  onNavigateAuthor,
+  onNavigateGallery 
+}) => {
   return (
     <header className="site-navbar">
       <div className="site-container nav-wrapper">
@@ -34,6 +40,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigateHome, onN
               >
                 <BookOpen size={16} />
                 <span>Poemario</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className={`nav-link ${currentView === 'gallery' ? 'active' : ''}`}
+                onClick={onNavigateGallery}
+                style={{ background: 'none', border: 'none' }}
+                title="Galería de Cuadernos"
+                aria-label="Galería de Cuadernos"
+              >
+                <Library size={16} />
+                <span>Galería de Cuadernos</span>
               </button>
             </li>
             <li>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -8,13 +8,16 @@ import {
   BookOpen, 
   Download, 
   Palette, 
-  Wand2,
-  History,
-  Bookmark
+  Wand2, 
+  History, 
+  Bookmark,
+  FileDown,
+  Loader2
 } from 'lucide-react';
 import type { Poema } from '../data/poemas';
 import type { GeneratedNotebook } from '../data/notebookTypes';
 import { playPageFlipSound } from '../utils/aiGenerator';
+import { exportNotebookToPdf } from '../utils/pdfExporter';
 
 interface BookViewerProps {
   poema: Poema;
@@ -43,17 +46,23 @@ export const BookViewer: React.FC<BookViewerProps> = ({
   const [isFlipping, setIsFlipping] = useState<boolean>(false);
   const [flipDirection, setFlipDirection] = useState<'next' | 'prev' | null>(null);
   
-  // Seguimiento de carga y reintento de imágenes
+  // Seguimiento de carga y reintento de imágenes (corregido para evitar ciclos y reflejar en <img>)
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+  const [retryUrls, setRetryUrls] = useState<Record<string, string>>({});
+  const preloadedUrlsRef = useRef<Record<string, boolean>>({});
 
-  // Sincronizar fuente si cambia el cuaderno generado
-  useEffect(() => {
-    if (generatedNotebook) {
-      setViewSource('generated');
-      setCurrentPage(0);
-    }
-  }, [generatedNotebook]);
+  // Estado de exportación a PDF
+  const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
+  const [pdfStatus, setPdfStatus] = useState<string>('');
+
+  // Sincronizar fuente si cambia el cuaderno generado (patrón oficial de React para derivar cambios de prop)
+  const [prevNotebookId, setPrevNotebookId] = useState<string | null>(generatedNotebook?.id || null);
+  if (generatedNotebook && prevNotebookId !== generatedNotebook.id) {
+    setPrevNotebookId(generatedNotebook.id);
+    setViewSource('generated');
+    setCurrentPage(0);
+  }
 
   const isViewingGenerated = viewSource === 'generated' && generatedNotebook && generatedNotebook.plates.length > 0;
   
@@ -85,23 +94,27 @@ export const BookViewer: React.FC<BookViewerProps> = ({
     }, 560);
   }, [isFlipping, currentPage]);
 
-  // Precarga predictiva en segundo plano de las láminas adyacentes
+  // Precarga predictiva en segundo plano de las láminas adyacentes (Solución Bug 2: Sin dependencias cíclicas)
   useEffect(() => {
     if (!isViewingGenerated || !generatedNotebook) return;
     const indices = [currentPage, currentPage + 1, currentPage - 1, currentPage + 2];
     indices.forEach(idx => {
       if (idx >= 0 && idx < generatedNotebook.plates.length) {
         const url = generatedNotebook.plates[idx].imageUrl;
-        if (!loadedImages[url]) {
+        if (!preloadedUrlsRef.current[url]) {
+          preloadedUrlsRef.current[url] = true;
           const img = new Image();
           img.src = url;
           img.onload = () => {
             setLoadedImages(prev => ({ ...prev, [url]: true }));
           };
+          img.onerror = () => {
+            setFailedImages(prev => ({ ...prev, [url]: true }));
+          };
         }
       }
     });
-  }, [currentPage, isViewingGenerated, generatedNotebook, loadedImages]);
+  }, [currentPage, isViewingGenerated, generatedNotebook]);
 
   // Reintento automático inteligente ante cortes o demoras iniciales de red
   const handleImageError = (url: string) => {
@@ -118,19 +131,21 @@ export const BookViewer: React.FC<BookViewerProps> = ({
     }, 2000);
   };
 
-  // Reintento manual si la imagen tardó o tuvo alguna interrupción de red
+  // Reintento manual que se refleja directamente en el <img> del DOM (Solución Bug 3)
   const handleRetryPlate = (imageUrl: string) => {
     setFailedImages(prev => ({ ...prev, [imageUrl]: false }));
     setLoadedImages(prev => ({ ...prev, [imageUrl]: false }));
-    const img = new Image();
     const refreshParam = `retry=${Date.now()}`;
     const refreshedUrl = imageUrl.includes('?') ? `${imageUrl}&${refreshParam}` : `${imageUrl}?${refreshParam}`;
+    setRetryUrls(prev => ({ ...prev, [imageUrl]: refreshedUrl }));
+
+    const img = new Image();
     img.src = refreshedUrl;
     img.onload = () => {
-      setLoadedImages(prev => ({ ...prev, [imageUrl]: true }));
+      setLoadedImages(prev => ({ ...prev, [imageUrl]: true, [refreshedUrl]: true }));
     };
     img.onerror = () => {
-      setFailedImages(prev => ({ ...prev, [imageUrl]: true }));
+      setFailedImages(prev => ({ ...prev, [imageUrl]: true, [refreshedUrl]: true }));
     };
   };
 
@@ -163,16 +178,53 @@ export const BookViewer: React.FC<BookViewerProps> = ({
     setZoomLevel(prev => (prev === 1 ? 1.25 : 1));
   };
 
-  const handleDownloadPlate = () => {
+  // Descarga limpia y segura de la lámina actual (Solución Bug 4: Cross-origin & base64)
+  const handleDownloadPlate = async () => {
     if (!currentGeneratedPlate) return;
-    const a = document.createElement('a');
-    a.href = currentGeneratedPlate.imageUrl;
-    a.download = `${poema.slug}-lamina-${currentPage + 1}.jpg`;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const filename = `${poema.slug}-lamina-${currentPage + 1}.jpg`;
+    const url = retryUrls[currentGeneratedPlate.imageUrl] || currentGeneratedPlate.imageUrl;
+
+    if (url.startsWith('data:')) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
+
+    try {
+      const resp = await fetch(url, { mode: 'cors' });
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    } catch {
+      window.open(url, '_blank');
+    }
+  };
+
+  // Exportar cuaderno completo a PDF editorial
+  const handleDownloadPdf = async () => {
+    if (!generatedNotebook) return;
+    setIsExportingPdf(true);
+    try {
+      await exportNotebookToPdf(generatedNotebook, poema, (percent) => {
+        setPdfStatus(`${percent}%`);
+      });
+    } catch (err) {
+      console.error('Error al exportar PDF:', err);
+      alert('Hubo un inconveniente al generar el PDF. Por favor reintenta.');
+    } finally {
+      setIsExportingPdf(false);
+      setPdfStatus('');
+    }
   };
 
   // Desglosar versos para la página derecha con capitular dorada
@@ -235,68 +287,49 @@ export const BookViewer: React.FC<BookViewerProps> = ({
     );
   }
 
-  // Preparar texto de la página poética
-  const plateText = currentGeneratedPlate ? currentGeneratedPlate.verseText : (poema.fullText || '');
-  const { firstLetter, firstLine, otherLines } = formatPoeticPage(plateText);
+  const { firstLetter, firstLine, otherLines } = currentGeneratedPlate 
+    ? formatPoeticPage(currentGeneratedPlate.verseText)
+    : { firstLetter: 'G', firstLine: 'uillermo Baena Restrepo', otherLines: ['Manuscrito original de la obra poética.'] };
+
+  const activePlateImgSrc = currentGeneratedPlate 
+    ? (retryUrls[currentGeneratedPlate.imageUrl] || currentGeneratedPlate.imageUrl)
+    : '';
 
   return (
     <div className="notebook-viewer-container">
-      {/* BARRA SUPERIOR DE HERRAMIENTAS Y FUENTES */}
-      <div className="notebook-topbar">
-        {/* Selector de Manuscrito Original vs Cuaderno IA */}
-        <div className="notebook-source-selector">
+      {/* BARRA SUPERIOR DE SELECTOR DE EDICIONES Y FUENTES */}
+      <div className="notebook-top-bar">
+        <div className="notebook-edition-selector">
           {hasOriginalPages && (
-            <button
-              className={`btn-source-toggle ${viewSource === 'original' ? 'active' : ''}`}
+            <button 
+              className={`btn-edition-pill ${viewSource === 'original' ? 'active' : ''}`}
               onClick={() => {
                 setViewSource('original');
                 setCurrentPage(0);
               }}
             >
-              <BookOpen size={15} />
-              <span>Manuscrito Facsimilar ({poema.notebookPages.length} págs)</span>
+              <BookOpen size={14} />
+              <span>Manuscrito Original</span>
             </button>
           )}
 
-          {generatedNotebook && (
-            <button
-              className={`btn-source-toggle ${viewSource === 'generated' ? 'active' : ''}`}
-              onClick={() => {
-                setViewSource('generated');
-                setCurrentPage(0);
-              }}
-            >
-              <Sparkles size={15} />
-              <span>Libro Ilustrado IA: {generatedNotebook.styleName} ({generatedNotebook.plates.length} págs)</span>
-            </button>
-          )}
-        </div>
-
-        {/* Acciones Rápidas: Crear otra versión o seleccionar histórico */}
-        <div className="notebook-topbar-actions">
-          {availableNotebooks.length > 1 && (
-            <div className="notebook-history-dropdown">
-              <History size={14} style={{ color: 'var(--gold-primary)' }} />
-              <select
-                value={generatedNotebook?.id || ''}
-                onChange={(e) => {
-                  const found = availableNotebooks.find(nb => nb.id === e.target.value);
-                  if (found) {
-                    onSelectNotebook(found);
-                    setViewSource('generated');
-                    setCurrentPage(0);
-                  }
+          {availableNotebooks.map((nb, index) => {
+            const isSelected = isViewingGenerated && generatedNotebook?.id === nb.id;
+            return (
+              <button
+                key={nb.id}
+                className={`btn-edition-pill ${isSelected ? 'active' : ''}`}
+                onClick={() => {
+                  onSelectNotebook(nb);
+                  setViewSource('generated');
+                  setCurrentPage(0);
                 }}
-                className="notebook-select-input"
               >
-                {availableNotebooks.map((nb, i) => (
-                  <option key={nb.id} value={nb.id}>
-                    Edición #{availableNotebooks.length - i}: {nb.styleName} ({new Date(nb.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+                <Sparkles size={14} />
+                <span>Edición {index + 1}: {nb.styleName.split('&')[0]} ({nb.plates.length} págs)</span>
+              </button>
+            );
+          })}
 
           <button 
             className="btn-create-another-notebook"
@@ -328,14 +361,30 @@ export const BookViewer: React.FC<BookViewerProps> = ({
 
         <div className="notebook-actions">
           {isViewingGenerated && (
-            <button 
-              className="btn-notebook-nav" 
-              onClick={handleDownloadPlate}
-              title="Descargar esta lámina ilustrada en alta resolución"
-            >
-              <Download size={16} />
-              <span>Guardar Lámina</span>
-            </button>
+            <>
+              <button 
+                className="btn-notebook-nav btn-pdf-export" 
+                onClick={handleDownloadPdf}
+                disabled={isExportingPdf}
+                title="Descargar libro completo en PDF editorial maquetado"
+              >
+                {isExportingPdf ? (
+                  <Loader2 size={16} className="spin-loader" />
+                ) : (
+                  <FileDown size={16} />
+                )}
+                <span>{isExportingPdf ? (pdfStatus || 'Generando...') : 'Descargar Libro PDF'}</span>
+              </button>
+
+              <button 
+                className="btn-notebook-nav" 
+                onClick={handleDownloadPlate}
+                title="Descargar esta lámina ilustrada en alta resolución"
+              >
+                <Download size={16} />
+                <span>Guardar Lámina</span>
+              </button>
+            </>
           )}
 
           <button 
@@ -450,7 +499,7 @@ export const BookViewer: React.FC<BookViewerProps> = ({
                     )}
 
                     <img 
-                      src={currentGeneratedPlate.imageUrl} 
+                      src={activePlateImgSrc} 
                       alt={`Lámina ilustrada ${currentGeneratedPlate.plateNumber} de ${poema.title}`}
                       className={`book-plate-img ${loadedImages[currentGeneratedPlate.imageUrl] ? 'image-visible' : 'image-hidden'}`}
                       loading="eager"
@@ -518,26 +567,19 @@ export const BookViewer: React.FC<BookViewerProps> = ({
                     ))}
                   </div>
 
-                  {/* Separador poético y firma del autor */}
-                  <div className="poem-footer-block">
-                    <div className="poetic-gold-divider">
-                      <span>❦</span>
+                  {/* Detalle poético adicional si el usuario aportó notas */}
+                  {isViewingGenerated && generatedNotebook?.userNotes && currentPage === 0 && (
+                    <div className="notebook-user-dedication">
+                      <span className="dedication-label">Directriz artística del lector:</span>
+                      <p className="dedication-text">«{generatedNotebook.userNotes}»</p>
                     </div>
-                    <div className="poet-sign">
-                      Guillermo Baena Restrepo
-                    </div>
-                    {generatedNotebook?.userNotes && isViewingGenerated && (
-                      <div className="author-notes-tribute">
-                        Nota del lector: «{generatedNotebook.userNotes}»
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
 
-              {/* Pie de página editorial */}
-              <div className="book-page-bottom-label">
-                <span className="book-imprint">El Cosmos de Guille</span>
+              {/* Pie de página de la página de versos */}
+              <div className="book-page-bottom-label right-folio">
+                <span className="leaf-ornament">✦  ·  ✦</span>
               </div>
             </div>
           </div>
@@ -548,52 +590,25 @@ export const BookViewer: React.FC<BookViewerProps> = ({
           className="book-page-turn-touch right-turn"
           onClick={nextPage}
           disabled={currentPage === totalPages - 1 || isFlipping}
-          aria-label="Página siguiente"
+          aria-label="Siguiente página"
         >
           <ChevronRight size={36} />
         </button>
       </div>
 
-      {/* TIRA DE MINIATURAS DEL LIBRO (CARRUSEL INFERIOR) */}
+      {/* Miniaturas de navegación rápida entre hojas */}
       <div className="notebook-thumbnails-strip">
-        <div className="strip-title">Hojas del Cuaderno:</div>
-        {isViewingGenerated && generatedNotebook
-          ? generatedNotebook.plates.map((plate, idx) => (
-              <button
-                key={plate.id}
-                onClick={() => {
-                  if (idx !== currentPage) {
-                    turnToPage(idx, idx > currentPage ? 'next' : 'prev');
-                  }
-                }}
-                className={`thumb-btn ${currentPage === idx ? 'active' : ''}`}
-                title={`Abrir Hoja ${idx + 1}`}
-              >
-                <img 
-                  src={plate.imageUrl} 
-                  alt={`Miniatura Hoja ${idx + 1}`} 
-                />
-                <span className="thumb-num">{idx + 1}</span>
-              </button>
-            ))
-          : poema.notebookPages.map((pageUrl, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  if (idx !== currentPage) {
-                    turnToPage(idx, idx > currentPage ? 'next' : 'prev');
-                  }
-                }}
-                className={`thumb-btn ${currentPage === idx ? 'active' : ''}`}
-                title={`Abrir Hoja ${idx + 1}`}
-              >
-                <img 
-                  src={pageUrl} 
-                  alt={`Miniatura ${idx + 1}`} 
-                />
-                <span className="thumb-num">{idx + 1}</span>
-              </button>
-            ))}
+        {Array.from({ length: totalPages }).map((_, idx) => (
+          <button
+            key={idx}
+            className={`notebook-thumb-button ${idx === currentPage ? 'active' : ''}`}
+            onClick={() => turnToPage(idx, idx > currentPage ? 'next' : 'prev')}
+            title={`Ir a la hoja ${idx + 1}`}
+          >
+            <span className="thumb-index">{idx + 1}</span>
+            <div className="thumb-leaf-preview" />
+          </button>
+        ))}
       </div>
     </div>
   );

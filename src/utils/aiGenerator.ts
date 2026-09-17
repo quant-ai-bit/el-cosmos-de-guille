@@ -151,32 +151,43 @@ export async function generateImageWithGoogle(prompt: string, apiKey: string): P
   return `data:${mimeType};base64,${base64Bytes}`;
 }
 
+// Singleton AudioContext para evitar fugas de memoria (AudioContext leak fix)
+let sharedAudioCtx: AudioContext | null = null;
+let sharedNoiseBuffer: AudioBuffer | null = null;
+
 /**
- * Sintetiza un sonido de paso de página realista usando Web Audio API
- * No requiere descargar archivos de audio externos y responde al instante
+ * Sintetiza un sonido de paso de página realista usando Web Audio API con un AudioContext reutilizable.
+ * No requiere descargar archivos de audio externos y responde al instante sin saturar el sistema.
  */
 export function playPageFlipSound(): void {
   try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
+    const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtxClass) return;
+    if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
+      sharedAudioCtx = new AudioCtxClass();
     }
+    if (sharedAudioCtx.state === 'suspended') {
+      sharedAudioCtx.resume();
+    }
+    const ctx = sharedAudioCtx;
     const duration = 0.28;
-    const bufferSize = Math.floor(ctx.sampleRate * duration);
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const output = buffer.getChannelData(0);
 
-    // Ruido blanco suave con decaimiento natural de fricción de papel
-    for (let i = 0; i < bufferSize; i++) {
-      const progress = i / bufferSize;
-      const decay = Math.exp(-progress * 4.2);
-      output[i] = (Math.random() * 2 - 1) * decay;
+    if (!sharedNoiseBuffer || sharedNoiseBuffer.sampleRate !== ctx.sampleRate) {
+      const bufferSize = Math.floor(ctx.sampleRate * duration);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+
+      // Ruido blanco suave con decaimiento natural de fricción de papel
+      for (let i = 0; i < bufferSize; i++) {
+        const progress = i / bufferSize;
+        const decay = Math.exp(-progress * 4.2);
+        output[i] = (Math.random() * 2 - 1) * decay;
+      }
+      sharedNoiseBuffer = buffer;
     }
 
     const whiteNoise = ctx.createBufferSource();
-    whiteNoise.buffer = buffer;
+    whiteNoise.buffer = sharedNoiseBuffer;
 
     // Filtro pasa banda para emular el crujido aterciopelado del pergamino antiguo
     const filter = ctx.createBiquadFilter();
@@ -201,65 +212,30 @@ export function playPageFlipSound(): void {
 }
 
 /**
- * Genera la URL de la imagen en alta resolución mediante Pollinations AI con semilla única
+ * Genera la lámina utilizando exclusivamente Google Imagen 3 de máxima calidad y consistencia.
+ * Elimina la variabilidad y artefactos de servicios de baja resolución como Pollinations.
  */
-export function generatePlateImageUrl(prompt: string, seed: number): string {
-  const encoded = encodeURIComponent(prompt.trim());
-  return `https://image.pollinations.ai/prompt/${encoded}?width=800&height=800&seed=${seed}&nologo=true`;
-}
-
-/**
- * Orquesta la generación inteligente: intenta primero con Google AI si hay clave válida,
- * o utiliza el generador artístico de alta definición con precalentamiento acelerado.
- */
-export async function generatePlateImageSmart(
+export async function generatePlateImage(
   prompt: string,
-  seed: number,
+  _seed?: number,
   customApiKey?: string
-): Promise<{ imageUrl: string; engine: 'google-imagen-3' | 'pollinations' }> {
+): Promise<{ imageUrl: string; engine: 'google-imagen-3' }> {
   const apiKey = customApiKey !== undefined ? customApiKey.trim() : getGoogleApiKey();
 
-  if (apiKey) {
-    try {
-      const googleImgData = await generateImageWithGoogle(prompt, apiKey);
-      return {
-        imageUrl: googleImgData,
-        engine: 'google-imagen-3'
-      };
-    } catch (err) {
-      console.warn('Fallo al invocar Google Imagen 3, recurriendo a motor alternativo:', err);
-    }
+  if (!apiKey) {
+    throw new Error(
+      'Falta la clave de API de Google Imagen 3. Puedes ingresarla en los ajustes o configurarla como VITE_GEMINI_API_KEY.'
+    );
   }
 
-  // Motor artístico Pollinations con semilla única y precalentamiento rápido (4s max de espera para no bloquear)
-  const fallbackUrl = generatePlateImageUrl(prompt, seed);
-  await preloadImage(fallbackUrl, 4500);
+  const imageUrl = await generateImageWithGoogle(prompt, apiKey);
   return {
-    imageUrl: fallbackUrl,
-    engine: 'pollinations'
+    imageUrl,
+    engine: 'google-imagen-3'
   };
 }
 
 /**
- * Precarga una imagen en memoria con tiempo de espera configurable
+ * Alias de compatibilidad hacia generatePlateImage
  */
-export function preloadImage(url: string, timeoutMs: number = 5000): Promise<void> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const timer = setTimeout(() => {
-      resolve();
-    }, timeoutMs);
-
-    img.onload = () => {
-      clearTimeout(timer);
-      resolve();
-    };
-
-    img.onerror = () => {
-      clearTimeout(timer);
-      resolve();
-    };
-
-    img.src = url;
-  });
-}
+export const generatePlateImageSmart = generatePlateImage;
