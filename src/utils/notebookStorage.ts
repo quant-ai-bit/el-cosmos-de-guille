@@ -7,8 +7,7 @@ import {
   query, 
   orderBy 
 } from 'firebase/firestore';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import type { GeneratedNotebook, GeneratedPlate } from '../data/notebookTypes';
 
 const STORAGE_KEY = 'cosmos_guille_generated_notebooks_v1';
@@ -20,7 +19,6 @@ const listeners: Array<(notebooks: GeneratedNotebook[]) => void> = [];
 
 export function subscribeToNotebooks(callback: (notebooks: GeneratedNotebook[]) => void): () => void {
   listeners.push(callback);
-  // Llamar inmediatamente con los datos actuales
   callback(getCachedNotebooks());
   return () => {
     const idx = listeners.indexOf(callback);
@@ -66,7 +64,7 @@ function updateLocalCache(notebooks: GeneratedNotebook[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(notebooks));
   } catch (e) {
-    console.warn('No se pudo guardar en localStorage (posible límite de cuota por base64):', e);
+    console.warn('No se pudo guardar en localStorage:', e);
   }
   notifyListeners(notebooks);
 }
@@ -81,9 +79,31 @@ export async function getAllNotebooks(): Promise<GeneratedNotebook[]> {
     
     if (!snapshot.empty) {
       const cloudNotebooks: GeneratedNotebook[] = [];
-      snapshot.forEach(docSnap => {
-        cloudNotebooks.push(docSnap.data() as GeneratedNotebook);
-      });
+      
+      for (const docSnap of snapshot.docs) {
+        const nbData = docSnap.data() as GeneratedNotebook;
+        
+        // Si las láminas están almacenadas en la subcolección 'plates' (arquitectura 100% Spark gratuita)
+        if (!nbData.plates || nbData.plates.length === 0) {
+          try {
+            const platesQuery = query(
+              collection(db, FIRESTORE_COLLECTION, docSnap.id, 'plates'),
+              orderBy('plateNumber', 'asc')
+            );
+            const platesSnap = await getDocs(platesQuery);
+            const loadedPlates: GeneratedPlate[] = [];
+            platesSnap.forEach(pDoc => {
+              loadedPlates.push(pDoc.data() as GeneratedPlate);
+            });
+            nbData.plates = loadedPlates;
+          } catch (platesErr) {
+            console.warn(`Error al leer subcolección de láminas para ${docSnap.id}:`, platesErr);
+          }
+        }
+
+        cloudNotebooks.push(nbData);
+      }
+
       // Sincronizar caché local
       updateLocalCache(cloudNotebooks);
       return cloudNotebooks;
@@ -114,31 +134,10 @@ export function getLatestNotebookForPoem(poemId: string): GeneratedNotebook | nu
 }
 
 /**
- * Sube una imagen base64 a Firebase Storage y retorna la URL pública persistente
- */
-async function uploadPlateImageToStorage(
-  notebookId: string, 
-  plateNumber: number, 
-  imageUrl: string
-): Promise<string> {
-  // Si ya es una URL web o no es base64, no requiere subida
-  if (!imageUrl.startsWith('data:')) {
-    return imageUrl;
-  }
-
-  try {
-    const fileRef = ref(storage, `notebooks/${notebookId}/plate_${plateNumber}.jpg`);
-    await uploadString(fileRef, imageUrl, 'data_url');
-    const downloadUrl = await getDownloadURL(fileRef);
-    return downloadUrl;
-  } catch (err) {
-    console.warn(`No se pudo subir lámina ${plateNumber} a Cloud Storage, se conservará la imagen:`, err);
-    return imageUrl;
-  }
-}
-
-/**
- * Guarda un cuaderno tanto en local (inmediato) como en Firebase Cloud Firestore y Storage
+ * Guarda un cuaderno de manera 100% gratuita y sin tarjeta en Cloud Firestore:
+ * - Guarda el documento principal del cuaderno.
+ * - Guarda cada lámina ilustrada como un documento independiente en la subcolección 'plates'
+ *   (para respetar holgadamente el límite de 1MB por documento de Firestore).
  */
 export async function saveNotebook(notebook: GeneratedNotebook): Promise<void> {
   // 1. Guardar de inmediato en caché local para respuesta instantánea en la interfaz
@@ -146,34 +145,33 @@ export async function saveNotebook(notebook: GeneratedNotebook): Promise<void> {
   const updated = [notebook, ...current.filter(nb => nb.id !== notebook.id)];
   updateLocalCache(updated);
 
-  // 2. Proceso en segundo plano para Cloud Storage y Firestore
+  // 2. Sincronización en segundo plano con Cloud Firestore
   try {
-    // Subir cada lámina a Firebase Storage si es base64
-    const cloudPlates: GeneratedPlate[] = await Promise.all(
-      notebook.plates.map(async (plate) => {
-        const cloudUrl = await uploadPlateImageToStorage(notebook.id, plate.plateNumber, plate.imageUrl);
-        return {
-          ...plate,
-          imageUrl: cloudUrl
-        };
-      })
-    );
-
-    const notebookToSave: GeneratedNotebook = {
-      ...notebook,
-      plates: cloudPlates
+    // A. Guardar metadatos del cuaderno en el documento raíz
+    const parentDocRef = doc(db, FIRESTORE_COLLECTION, notebook.id);
+    const metadataToSave = {
+      id: notebook.id,
+      poemId: notebook.poemId,
+      poemTitle: notebook.poemTitle,
+      styleId: notebook.styleId,
+      styleName: notebook.styleName,
+      userNotes: notebook.userNotes || null,
+      createdAt: notebook.createdAt,
+      seed: notebook.seed,
+      totalPlates: notebook.plates.length
     };
+    await setDoc(parentDocRef, metadataToSave);
 
-    // Guardar en Firestore
-    await setDoc(doc(db, FIRESTORE_COLLECTION, notebook.id), notebookToSave);
+    // B. Guardar cada lámina en la subcolección 'plates' (cada una con su propio documento de hasta 1MB)
+    const platesPromises = notebook.plates.map((plate) => {
+      const plateDocRef = doc(db, FIRESTORE_COLLECTION, notebook.id, 'plates', `plate_${plate.plateNumber}`);
+      return setDoc(plateDocRef, plate);
+    });
+    await Promise.all(platesPromises);
 
-    // Actualizar la caché local con las URLs definitivas de Cloud Storage
-    const finalCache = [notebookToSave, ...getCachedNotebooks().filter(nb => nb.id !== notebook.id)];
-    updateLocalCache(finalCache);
-
-    console.info(`Cuaderno «${notebook.poemTitle}» sincronizado exitosamente con Firebase.`);
+    console.info(`Cuaderno «${notebook.poemTitle}» y sus ${notebook.plates.length} láminas sincronizados con Cloud Firestore.`);
   } catch (cloudErr) {
-    console.warn('Aviso: El cuaderno se guardó localmente, pero falló la sincronización con la nube Firebase:', cloudErr);
+    console.warn('Aviso: El cuaderno se guardó localmente, pero falló la sincronización con Firestore:', cloudErr);
   }
 }
 
@@ -188,7 +186,12 @@ export async function deleteNotebook(notebookId: string): Promise<void> {
 
   // 2. Eliminar de Firestore
   try {
-    await deleteDoc(doc(db, FIRESTORE_COLLECTION, notebookId));
+    const parentDocRef = doc(db, FIRESTORE_COLLECTION, notebookId);
+    const platesQuery = collection(db, FIRESTORE_COLLECTION, notebookId, 'plates');
+    const platesSnap = await getDocs(platesQuery);
+    const deletePromises = platesSnap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(deletePromises);
+    await deleteDoc(parentDocRef);
     console.info(`Cuaderno ${notebookId} eliminado de Firebase.`);
   } catch (err) {
     console.warn('No se pudo eliminar de Firestore:', err);
