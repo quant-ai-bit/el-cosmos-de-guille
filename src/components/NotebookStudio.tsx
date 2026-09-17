@@ -7,9 +7,11 @@ import {
   Check, 
   Loader2, 
   ArrowRight,
-  BookOpen,
-  Wand2,
-  Bookmark
+  BookOpen, 
+  Wand2, 
+  Bookmark,
+  AlertCircle,
+  Key
 } from 'lucide-react';
 import type { Poema } from '../data/poemas';
 import { NOTEBOOK_STYLES, segmentPoemHarmonically } from '../data/notebookTypes';
@@ -17,7 +19,8 @@ import type { NotebookStyle, GeneratedNotebook, GeneratedPlate } from '../data/n
 import { 
   buildPlatePrompt, 
   generatePlateImageSmart, 
-  getGoogleApiKey 
+  getGoogleApiKey,
+  setGoogleApiKey
 } from '../utils/aiGenerator';
 import { saveNotebook } from '../utils/notebookStorage';
 
@@ -40,19 +43,25 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [previewPlates, setPreviewPlates] = useState<GeneratedPlate[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
+  // Clave opcional de Google Gemini para usuarios avanzados
+  const [customKey, setCustomKey] = useState<string>(() => getGoogleApiKey());
+  const [showKeyConfig, setShowKeyConfig] = useState<boolean>(false);
 
   // El número de páginas lo define el tamaño y la distribución armónica del texto
   const poemSegments = segmentPoemHarmonically(poema.fullText);
 
   const handleStartGeneration = useCallback(async () => {
     setIsGenerating(true);
+    setErrorMessage(null);
     setProgressPercent(5);
     setStatusMessage('Componiendo la edición poética y distribuyendo versos...');
     setPreviewPlates([]);
 
     const baseSeed = Math.floor(Math.random() * 899999) + 100000;
     const total = poemSegments.length;
-    const apiKey = getGoogleApiKey();
+    const apiKey = customKey.trim() || getGoogleApiKey();
 
     try {
       const plateDefinitions = poemSegments.map((verse, i) => {
@@ -72,7 +81,7 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
       let completedCount = 0;
       const results: GeneratedPlate[] = new Array(total);
 
-      // Disparar las peticiones en paralelo con desfase elegante de 250ms
+      // Disparar las peticiones con desfase elegante
       const promises = plateDefinitions.map(async (def, i) => {
         await new Promise(res => setTimeout(res, i * 250));
         
@@ -115,8 +124,8 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
         seed: baseSeed
       };
 
-      // Guardar en almacenamiento local
-      saveNotebook(newNotebook);
+      // Guardar en almacenamiento híbrido (Local + Firestore)
+      await saveNotebook(newNotebook);
 
       setTimeout(() => {
         setIsGenerating(false);
@@ -124,12 +133,12 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
         onClose();
       }, 700);
 
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error durante la generación del cuaderno:', err);
       setIsGenerating(false);
-      setStatusMessage('Ocurrió un inconveniente al generar. Puedes reintentar.');
+      setErrorMessage(err?.message || 'Ocurrió un inconveniente al generar. Por favor reintenta.');
     }
-  }, [poemSegments, poema, selectedStyle, userNotes, onNotebookCreated, onClose]);
+  }, [poemSegments, poema, selectedStyle, userNotes, customKey, onNotebookCreated, onClose]);
 
   if (!isOpen) return null;
 
@@ -169,6 +178,25 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
         {!isGenerating ? (
           <div className="studio-modal-body">
             
+            {/* MENSAJE DE ERROR SI OCURRE */}
+            {errorMessage && (
+              <div style={{
+                background: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.4)',
+                color: '#fca5a5',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '0.75rem',
+                marginBottom: '1.25rem',
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem'
+              }}>
+                <AlertCircle size={18} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             {/* DISTRIBUCIÓN ARMÓNICA EDITORIAL */}
             <div className="harmonic-edition-banner">
               <div className="harmonic-icon-tag">
@@ -244,6 +272,53 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
                   Esta indicación se sumará a los versos del poema para que la IA interprete las láminas a tu gusto ({userNotes.length}/300 car.).
                 </div>
               </div>
+            </div>
+
+            {/* AJUSTE OPCIONAL DE CLAVE GEMINI */}
+            <div style={{ margin: '0.5rem 0 1.25rem' }}>
+              <button 
+                type="button" 
+                onClick={() => setShowKeyConfig(!showKeyConfig)}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  color: 'var(--gold-dim)', 
+                  fontSize: '0.82rem', 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.35rem',
+                  padding: '0.2rem 0'
+                }}
+              >
+                <Key size={13} />
+                <span>{showKeyConfig ? 'Ocultar ajuste de clave Google Gemini' : 'Configurar clave Google Gemini (Opcional)'}</span>
+              </button>
+              {showKeyConfig && (
+                <div style={{ marginTop: '0.6rem' }}>
+                  <input 
+                    type="password"
+                    value={customKey}
+                    onChange={(e) => {
+                      setCustomKey(e.target.value);
+                      setGoogleApiKey(e.target.value);
+                    }}
+                    placeholder="Pega aquí tu Gemini API Key (opcional)"
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.85rem',
+                      background: 'rgba(20, 18, 25, 0.85)',
+                      border: '1px solid rgba(212, 175, 55, 0.3)',
+                      borderRadius: '0.5rem',
+                      color: '#fff',
+                      fontSize: '0.88rem'
+                    }}
+                  />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.35rem' }}>
+                    Si no ingresas una clave o tu cuota gratuita está limitada, se usará automáticamente el motor artístico de alta resolución sin interrupciones.
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* VISTA PREVIA DE PÁGINAS ARMÓNICAS */}

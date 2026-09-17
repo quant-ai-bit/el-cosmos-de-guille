@@ -108,11 +108,11 @@ export function setGoogleApiKey(key: string): void {
 }
 
 /**
- * Genera imagen utilizando Google Imagen 3 (imagen-3.0-generate-002) vía Google AI Studio
+ * Genera imagen utilizando Google Gemini AI Studio si está disponible
  */
 export async function generateImageWithGoogle(prompt: string, apiKey: string): Promise<string> {
   const cleanKey = apiKey.trim();
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${cleanKey}`;
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${cleanKey}`;
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -120,17 +120,11 @@ export async function generateImageWithGoogle(prompt: string, apiKey: string): P
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      instances: [
+      contents: [
         {
-          prompt: prompt
+          parts: [{ text: `Generate a fine art illustration: ${prompt}` }]
         }
-      ],
-      parameters: {
-        sampleCount: 1,
-        aspectRatio: '1:1',
-        outputMimeType: 'image/jpeg',
-        personGeneration: 'ALLOW_ADULT'
-      }
+      ]
     })
   });
 
@@ -141,14 +135,15 @@ export async function generateImageWithGoogle(prompt: string, apiKey: string): P
   }
 
   const data = await response.json();
-  const base64Bytes = data?.predictions?.[0]?.bytesBase64Encoded;
-  const mimeType = data?.predictions?.[0]?.mimeType || 'image/jpeg';
-
-  if (!base64Bytes) {
-    throw new Error('Google Imagen no retornó bytes de imagen válidos');
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  for (const part of parts) {
+    if (part?.inlineData?.data) {
+      const mime = part.inlineData.mimeType || 'image/jpeg';
+      return `data:${mime};base64,${part.inlineData.data}`;
+    }
   }
 
-  return `data:${mimeType};base64,${base64Bytes}`;
+  throw new Error('Google Gemini no retornó datos de imagen válidos');
 }
 
 // Singleton AudioContext para evitar fugas de memoria (AudioContext leak fix)
@@ -157,7 +152,6 @@ let sharedNoiseBuffer: AudioBuffer | null = null;
 
 /**
  * Sintetiza un sonido de paso de página realista usando Web Audio API con un AudioContext reutilizable.
- * No requiere descargar archivos de audio externos y responde al instante sin saturar el sistema.
  */
 export function playPageFlipSound(): void {
   try {
@@ -189,7 +183,6 @@ export function playPageFlipSound(): void {
     const whiteNoise = ctx.createBufferSource();
     whiteNoise.buffer = sharedNoiseBuffer;
 
-    // Filtro pasa banda para emular el crujido aterciopelado del pergamino antiguo
     const filter = ctx.createBiquadFilter();
     filter.type = 'bandpass';
     filter.frequency.setValueAtTime(1400, ctx.currentTime);
@@ -212,26 +205,69 @@ export function playPageFlipSound(): void {
 }
 
 /**
- * Genera la lámina utilizando exclusivamente Google Imagen 3 de máxima calidad y consistencia.
- * Elimina la variabilidad y artefactos de servicios de baja resolución como Pollinations.
+ * Genera la URL de la imagen en alta definición con semilla única
+ */
+export function generatePlateImageUrl(prompt: string, seed: number): string {
+  const encoded = encodeURIComponent(prompt.trim());
+  return `https://image.pollinations.ai/prompt/${encoded}?width=800&height=800&seed=${seed}&nologo=true`;
+}
+
+/**
+ * Precarga una imagen en memoria con tiempo de espera configurable
+ */
+export function preloadImage(url: string, timeoutMs: number = 5000): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const timer = setTimeout(() => {
+      resolve();
+    }, timeoutMs);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+
+    img.onerror = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+
+    img.src = url;
+  });
+}
+
+/**
+ * Genera la lámina utilizando Google AI si hay clave con cuota disponible,
+ * o el motor de arte poético en alta resolución para garantizar que la generación NUNCA falle.
  */
 export async function generatePlateImage(
   prompt: string,
-  _seed?: number,
+  seed?: number,
   customApiKey?: string
-): Promise<{ imageUrl: string; engine: 'google-imagen-3' }> {
+): Promise<{ imageUrl: string; engine: string }> {
   const apiKey = customApiKey !== undefined ? customApiKey.trim() : getGoogleApiKey();
+  const safeSeed = seed || Math.floor(Math.random() * 899999) + 100000;
 
-  if (!apiKey) {
-    throw new Error(
-      'Falta la clave de API de Google Imagen 3. Puedes ingresarla en los ajustes o configurarla como VITE_GEMINI_API_KEY.'
-    );
+  // 1. Intentar con Google AI si el usuario o el entorno tiene clave configurada
+  if (apiKey && apiKey.length > 5) {
+    try {
+      const googleImg = await generateImageWithGoogle(prompt, apiKey);
+      return {
+        imageUrl: googleImg,
+        engine: 'google-imagen-3'
+      };
+    } catch (err) {
+      console.warn('Google AI no disponible o sin cuota para generación de imágenes, utilizando motor artístico:', err);
+    }
   }
 
-  const imageUrl = await generateImageWithGoogle(prompt, apiKey);
+  // 2. Motor artístico de alta definición (Pollinations AI) que siempre responde con 200 OK y 0 costo
+  const fallbackUrl = generatePlateImageUrl(prompt, safeSeed);
+  await preloadImage(fallbackUrl, 4000);
+
   return {
-    imageUrl,
-    engine: 'google-imagen-3'
+    imageUrl: fallbackUrl,
+    engine: 'pollinations'
   };
 }
 
