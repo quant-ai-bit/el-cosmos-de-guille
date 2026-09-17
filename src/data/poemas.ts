@@ -383,14 +383,66 @@ export const POEMAS: Poema[] = [
     "id": "los-abuelos",
     "title": "Los Abuelos",
     "slug": "los-abuelos",
-    "subtitle": "Árboles de la memoria y remanso del alma",
+    "subtitle": "La savia nueva y el renacer del amor",
     "collection": "Que diría el olvido del último recuerdo",
     "audioUrl": "/audio/los_abuelos.mp3",
     "vidsUrl": "https://docs.google.com/videos/d/1ByuDH2qFnbodpG7UWOCkooCUUl_PmE_OXY_Gy4mqpvE/play?usp=sharing",
     "hasNotebook": false,
     "notebookPages": [],
-    "synopsis": "Un tributo de amor filial y gratitud hacia las raíces vivas de nuestra historia familiar y colectiva.",
-    "fullText": "Los abuelos son los árboles añejos\ncuyas raíces abrazan los cimientos de la memoria.\nCaminan despacio, llevando en sus ojos\nla sabiduría del tiempo y la quietud del ocaso.\nEn sus manos temblorosas pero firmes\nguardan las caricias que sanaron la infancia\ny las palabras que jamás se borran del corazón.\nTestigos mudos de tantas batallas,\nsu voz es el remanso donde el alma encuentra cobijo.\nHonrar a los abuelos es mirar al espejo del tiempo\ny agradecer el sendero que con amor labraron para nosotros."
+    "synopsis": "Cuando el cuerpo reposaba y el alma estaba serena, se dio la reencarnación y brotaron frutos de amor: la llegada milagrosa de los nietos transformó la quietud en vida, luz y alegría.",
+    "scenes": [
+      {
+        "scene": 1,
+        "text": "Cuando el cuerpo reposaba, el alma estaba serena y el espíritu escribía con fe sus últimas páginas, se dio la reencarnación.",
+        "prompt": "Cinematic realistic film, 8k, warm intimate twilight light, solemn nostalgic mood. An elderly dignified grandfather sitting peacefully in a sunlit wooden study, serene smile, hands resting on an open vintage journal."
+      },
+      {
+        "scene": 2,
+        "text": "Y del árbol de la vida brotaron frutos de amor. Aparecieron los nietos, un milagro que Dios tenía guardado en los libros del privilegio y el don, la más tierna descendencia de dulzura e ilusión.",
+        "prompt": "Cinematic realistic film, 8k, warm morning golden light. A majestic lush old oak tree in a sunlit meadow, small young smiling grandchildren running with open arms towards their smiling grandparents, ethereal light particles, emotive and heartwarming."
+      },
+      {
+        "scene": 3,
+        "text": "Y al encontrarse los ojos, se conjugaron los tiempos y escribieron sus caminos en un solo corazón.",
+        "prompt": "Cinematic realistic film, 8k, golden hour backlighting. Close-up emotional portrait, the weathered kind eyes of an elderly grandfather looking down affectionately into the bright sparkling eyes of his small grandchild, forehead to forehead touch of deep love."
+      },
+      {
+        "scene": 4,
+        "text": "La savia nueva llegó y lo que antes era quietud se convirtió en movimiento, lo que antes era estatismo se transformó en energía, lo que ayer era añoranza se revirtió en ilusión, lo que antes era nostalgia se volvió luz y alegría.",
+        "prompt": "Cinematic realistic film, 8k, vibrant dynamic morning light. Grandparents laughing joyfully in a vibrant sunlit garden with their grandchildren, colorful wildflowers, sunlight bursting through branches, dynamic movement full of revitalized vitality."
+      },
+      {
+        "scene": 5,
+        "text": "La aparición de los nietos en la vida de los abuelos imprimió a su pensamiento un hálito de niñez y deseos de vivir.",
+        "prompt": "Cinematic realistic film, 8k, cozy warm afternoon atmosphere. An elderly grandmother and grandfather on a cozy porch, laughing wholeheartedly while holding colorful paper pinwheels spinning in the wind with the children."
+      },
+      {
+        "scene": 6,
+        "text": "Con el vuelo de la cometa se levantaron sus párpados, con el juego de las canicas recobraron su visión,",
+        "prompt": "Cinematic realistic film, 8k, breezy sunny afternoon, vast blue sky with fluffy white clouds. A grandfather holding the string of a vibrant diamond kite flying high in the wind together with his grandson, both looking up with wide joyful eyes."
+      },
+      {
+        "scene": 7,
+        "text": "afinaron sus oídos con gritos y algarabías, mejoraron sus reflejos jugando al escondidijo, fortificaron sus piernas detrás de una pelota,",
+        "prompt": "Cinematic realistic film, 8k, golden grass field in late afternoon. Grandfather playfully chasing a bright red ball with his cheerful granddaughter in a grassy park, spontaneous laughter, lively motion blur, warm sun flare."
+      },
+      {
+        "scene": 8,
+        "text": "la precisión de sus manos escribiendo las vocales, la movilidad de sus labios con cánticos infantiles, la dimensión de sus brazos enseñando la ternura.",
+        "prompt": "Cinematic realistic film, 8k, soft gentle indoor window light. An elderly grandmother gently guiding a little girl's hand with a colored pencil on paper, warm embrace, singing together with tender expressions, deeply touching detail."
+      },
+      {
+        "scene": 9,
+        "text": "Y al cambiar radicalmente su letárgica biología, en el corazón del abuelo se empotró un alma de niño y en el alma de la abuela renació el amor de madre.",
+        "prompt": "Cinematic realistic film, 8k, glowing twilight terrace. Grandparents sitting with the children wrapped in a soft knitted blanket, gazing at starry skies, expressions of profound rebirth, peace, and maternal radiance."
+      },
+      {
+        "scene": 10,
+        "text": "Los abuelos siempre dan sabiduría, consejos ciertos, ternura y amor incondicional; y los nietos les regalan juventud, amor y paz.",
+        "prompt": "Cinematic realistic film, 8k, master shot, heavenly golden sunset. Three generations together on a panoramic green hilltop overlooking a serene valley, holding hands in unity, divine sunbeams bathing them in golden warmth, feeling of eternal love, peace and legacy."
+      }
+    ],
+    "fullText": "Cuando el cuerpo reposaba,\nel alma estaba serena\ny el espíritu escribía con fe\nsus últimas páginas,\nse dio la reencarnación.\n\nY del árbol de la vida\nbrotaron frutos de amor.\nAparecieron los nietos,\nun milagro\nque Dios tenía guardado\nen los libros\ndel privilegio y el don,\nla más tierna descendencia\nde dulzura e ilusión.\n\nY al encontrarse los ojos,\nse conjugaron los tiempos\ny escribieron sus caminos\nen un solo corazón.\n\nLa savia nueva llegó\ny lo que antes era quietud\nse convirtió en movimiento,\nlo que antes era estatismo\nse transformó en energía,\nlo que ayer era añoranza\nse revirtió en ilusión,\nlo que antes era nostalgia\nse volvió luz y alegría.\n\nLa aparición de los nietos\nen la vida de los abuelos\nimprimió a su pensamiento\nun hálito de niñez\ny deseos de vivir.\n\nCon el vuelo de la cometa\nse levantaron sus párpados,\ncon el juego de las canicas\nrecobraron su visión,\nafinaron sus oídos\ncon gritos y algarabías,\nmejoraron sus reflejos\njugando al escondidijo,\nfortificaron sus piernas\ndetrás de una pelota,\nla precisión de sus manos\nescribiendo las vocales,\nla movilidad de sus labios\ncon cánticos infantiles,\nla dimensión de sus brazos\nenseñando la ternura.\n\nY al cambiar radicalmente\nsu letárgica biología,\nen el corazón del abuelo\nse empotró un alma de niño\ny en el alma de la abuela\nrenació el amor de madre.\n\nLos abuelos siempre dan\nsabiduría,\nconsejos ciertos,\nternura\ny amor incondicional;\ny los nietos\nles regalan\njuventud,\namor y paz."
   },
   {
     "id": "el-mendigo",

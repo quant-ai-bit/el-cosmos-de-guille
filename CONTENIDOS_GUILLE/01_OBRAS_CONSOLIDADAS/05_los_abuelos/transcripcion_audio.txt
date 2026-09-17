@@ -1,21 +1,4 @@
----
-id: "los-abuelos"
-titulo: "Los Abuelos"
-slug: "los-abuelos"
-subtitulo: "La savia nueva y el renacer del amor"
-coleccion: "Que diría el olvido del último recuerdo"
-audio_web: "/audio/los_abuelos.mp3"
-video_url: "https://docs.google.com/videos/d/1ByuDH2qFnbodpG7UWOCkooCUUl_PmE_OXY_Gy4mqpvE/play?usp=sharing"
-tiene_cuaderno: false
-sinopsis: "Cuando el cuerpo reposaba y el alma estaba serena, se dio la reencarnación y brotaron frutos de amor: la llegada milagrosa de los nietos transformó la quietud en vida, luz y alegría."
----
-
-# Los Abuelos
-*Por Guillermo Baena Restrepo*
-
-> Cuando el cuerpo reposaba y el alma estaba serena, se dio la reencarnación y brotaron frutos de amor: la llegada milagrosa de los nietos transformó la quietud en vida, luz y alegría.
-
-## 📜 Texto Completo del Poema (Transcripción Fiel del Audio)
+**Los abuelos**
 
 Cuando el cuerpo reposaba,
 el alma estaba serena
