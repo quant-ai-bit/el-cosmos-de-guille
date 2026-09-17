@@ -2223,6 +2223,8 @@ body {
   border-radius: 2px;
   filter: contrast(1.05) brightness(0.98);
   transition: opacity 0.5s ease;
+  transform: scale(1.07);
+  transform-origin: 35% 35%;
 }
 
 .book-plate-img.image-hidden {
