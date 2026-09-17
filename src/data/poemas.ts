@@ -448,13 +448,60 @@ export const POEMAS: Poema[] = [
     "id": "el-mendigo",
     "title": "El Mendigo",
     "slug": "el-mendigo",
-    "subtitle": "La dignidad descalza frente a la vanidad humana",
+    "subtitle": "Una sombra triste dibujada en la lluvia",
     "collection": "Que diría el olvido del último recuerdo",
     "audioUrl": "/audio/el_mendigo.mp3",
     "vidsUrl": "https://docs.google.com/videos/d/1fptS3KErNIwIzPkDUZV6tCvqTE4kCYlOHXrcRsElmt8/play?usp=sharing",
     "hasNotebook": false,
     "notebookPages": [],
-    "synopsis": "Una mirada trascendente sobre el desapego terrenal, la intemperie y la compasión silenciosa del caminante.",
-    "fullText": "A la orilla del camino, con la mirada perdida\nen el horizonte de los desengaños,\nel mendigo no extiende la mano pidiendo limosna,\nofrece en su silencio una lección de vida.\nVencedor de las lluvias y de las noches frías,\nlleva en su ropaje andrajoso la dignidad intacta\nde quien ha comprendido que la riqueza del mundo\nes vanidad y humo.\nEl mendigo mira al caminante con la compasión del sabio\nque sabe que todos, en el fondo,\nmendigamos un poco de amor y de consuelo."
+    "synopsis": "Venía del exilio con los ojos llorosos y caminaba sin rumbo por las calles desiertas: la conmovedora elegía a un ser que ignoraba su origen y al que las legiones humanas arrojaban con miedo un mendrugo de pan.",
+    "scenes": [
+      {
+        "scene": 1,
+        "text": "Venía del exilio con los ojos llorosos, por el surco de sus ojos descendían sus lágrimas, y en sus labios sedientos murmuraba el cansancio.",
+        "prompt": "Cinematic realistic film, 8k, dramatic moody rainy dusk atmosphere, soft street lamp glow. Close-up portrait of an aged solitary wanderer, tears slowly tracing down his weathered wrinkled cheeks, dry parched lips, profound melancholy and endurance."
+      },
+      {
+        "scene": 2,
+        "text": "No sabía desde niño qué era el calor humano, y abarcaron sus brazos siempre la soledad.",
+        "prompt": "Cinematic realistic film, 8k, cold desaturated blue tones with a sliver of distant warm light. A lonely figure standing with folded arms in an empty twilight alleyway, misty cobblestones, long dark shadows, haunting poetic loneliness."
+      },
+      {
+        "scene": 3,
+        "text": "No sabía quién era ni de dónde venía. Le decían un nombre y por instinto miraba. Caminaba sin rumbo por las calles desiertas.",
+        "prompt": "Cinematic realistic film, 8k, wide angle shot, deserted nocturnal city square washed by recent rain, reflections on wet stone pavement, solitary traveler in worn dark coat walking slowly into the misty distance."
+      },
+      {
+        "scene": 4,
+        "text": "Recorría los espacios con los pies entumidos y tenía mucho tiempo sin que tiempo tuviera.",
+        "prompt": "Cinematic realistic film, 8k, low angle tracking shot, bare feet weathered by mud and rain stepping cautiously along a desolate cobblestone street at dawn, faint amber haze on the horizon."
+      },
+      {
+        "scene": 5,
+        "text": "Ignoraba su origen y sus antepasados, no sabía de afectos, ni entendía de amores, no tenía en su tacto sensación del calor, no tenía en sus ojos una imagen alegre, ni guardaba en sus oídos una nota feliz, no tenía en sus labios dibujada la risa.",
+        "prompt": "Cinematic realistic film, 8k, Rembrandt side lighting, deep shadows. Side profile portrait of the wanderer sitting against a cold stone wall, hands resting on knees, eyes staring into infinity with detached existential depth."
+      },
+      {
+        "scene": 6,
+        "text": "Caminaba descalzo como había llegado. Un cigarro en la boca lo ponía a soñar, un periódico viejo abrazaba sus lumbares y un pan avinagrado distraía sus fatigas.",
+        "prompt": "Cinematic realistic film, 8k, atmospheric cinematic realism. An old man resting under an arched bridge, a thin wisp of smoke rising from a cigarette between his lips, holding a crust of dry bread in worn hands, vintage papers wrapped around him."
+      },
+      {
+        "scene": 7,
+        "text": "Era una sombra triste dibujada en la lluvia, una piel calcinada adherida al sol, con fantasmas antiguos compartía sus noches y temores noctámbulos alertaban su espíritu.",
+        "prompt": "Cinematic realistic film, 8k, heavy nocturnal rain falling through street lamps, silhouetted figure walking through glistening puddles, ethereal mist and dreamlike reflections, solemn poetic mood."
+      },
+      {
+        "scene": 8,
+        "text": "No sabía quién era ni de dónde venía, solo supo que un día se sintió en el exilio y en un crudo desierto transcurrieron sus días. Le sobraban preguntas y no habían respuestas.",
+        "prompt": "Cinematic realistic film, 8k, sweeping landscape, harsh windswept arid twilight desert merging into empty city outskirts, the lone wanderer gazing at an overcast endless sky, existential grandeur."
+      },
+      {
+        "scene": 9,
+        "text": "Lo llamaban mendigo las legiones humanas y al sentir que su alma se sentía cercana, le arrojaban con miedo un mendrugo de pan.",
+        "prompt": "Cinematic realistic film, 8k, master emotional scene, contrasting crowd of hurried shadowy city pedestrians and the serene, humble presence of the wanderer standing in dignity, a piece of bread offered on the stone ground, glowing golden light breaking through grey clouds."
+      }
+    ],
+    "fullText": "Venía del exilio\ncon los ojos llorosos,\npor el surco de sus ojos\ndescendían sus lágrimas,\ny en sus labios sedientos\nmurmuraba el cansancio.\n\nNo sabía desde niño\nqué era el calor humano,\ny abarcaron sus brazos\nsiempre la soledad.\n\nNo sabía quién era\nni de dónde venía.\nLe decían un nombre\ny por instinto miraba.\nCaminaba sin rumbo\npor las calles desiertas.\n\nRecorría los espacios con los pies entumidos\ny tenía mucho tiempo\nsin que tiempo tuviera.\n\nIgnoraba su origen y sus antepasados,\nno sabía de afectos,\nni entendía de amores,\nno tenía en su tacto sensación del calor,\nno tenía en sus ojos\nuna imagen alegre,\nni guardaba en sus oídos\nuna nota feliz,\nno tenía en sus labios\ndibujada la risa.\n\nCaminaba descalzo como había llegado.\nUn cigarro en la boca lo ponía a soñar,\nun periódico viejo abrazaba sus lumbares\ny un pan avinagrado distraía sus fatigas.\n\nEra una sombra triste\ndibujada en la lluvia,\nuna piel calcinada\nadherida al sol,\ncon fantasmas antiguos compartía sus noches\ny temores noctámbulos alertaban su espíritu.\n\nNo sabía quién era\nni de dónde venía,\nsolo supo que un día\nse sintió en el exilio\ny en un crudo desierto transcurrieron sus días.\n\nLe sobraban preguntas\ny no habían respuestas.\n\nLo llamaban mendigo\nlas legiones humanas\ny al sentir que su alma\nse sentía cercana,\nle arrojaban con miedo\nun mendrugo de pan."
   }
 ];

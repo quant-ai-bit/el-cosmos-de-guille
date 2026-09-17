@@ -1,22 +1,7 @@
----
-id: "el-mendigo"
-titulo: "El Mendigo"
-slug: "el-mendigo"
-subtitulo: "Una sombra triste dibujada en la lluvia"
-coleccion: "Que diría el olvido del último recuerdo"
-audio_web: "/audio/el_mendigo.mp3"
-video_url: "https://docs.google.com/videos/d/1fptS3KErNIwIzPkDUZV6tCvqTE4kCYlOHXrcRsElmt8/play?usp=sharing"
-tiene_cuaderno: false
-sinopsis: "Venía del exilio con los ojos llorosos y caminaba sin rumbo por las calles desiertas: la conmovedora elegía a un ser que ignoraba su origen y al que las legiones humanas arrojaban con miedo un mendrugo de pan."
----
+Del poemario «¿Qué diría el olvido del último recuerdo?»
+Letra y piano de Guillermo Baena Restrepo
 
-# El Mendigo
-*Por Guillermo Baena Restrepo*
-*(Del poemario «¿Qué diría el olvido del último recuerdo?» — Letra y piano de Guillermo Baena Restrepo)*
-
-> Venía del exilio con los ojos llorosos y caminaba sin rumbo por las calles desiertas: la conmovedora elegía a un ser que ignoraba su origen y al que las legiones humanas arrojaban con miedo un mendrugo de pan.
-
-## 📜 Texto Completo del Poema (Transcripción Fiel del Audio)
+El mendigo
 
 Venía del exilio
 con los ojos llorosos,
