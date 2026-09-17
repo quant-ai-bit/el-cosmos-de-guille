@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { Poema } from '../data/poemas';
 import type { GeneratedNotebook } from '../data/notebookTypes';
+import { playPageFlipSound } from '../utils/aiGenerator';
 
 interface BookViewerProps {
   poema: Poema;
@@ -41,6 +42,10 @@ export const BookViewer: React.FC<BookViewerProps> = ({
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [isFlipping, setIsFlipping] = useState<boolean>(false);
   const [flipDirection, setFlipDirection] = useState<'next' | 'prev' | null>(null);
+  
+  // Seguimiento de carga y reintento de imágenes
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   // Sincronizar fuente si cambia el cuaderno generado
   useEffect(() => {
@@ -58,20 +63,76 @@ export const BookViewer: React.FC<BookViewerProps> = ({
 
   const currentGeneratedPlate = isViewingGenerated ? generatedNotebook.plates[currentPage] : null;
 
-  // Animación realista de paso de página
+  // Animación realista de paso de página 3D con audio de papel pergamino
   const turnToPage = useCallback((newPage: number, direction: 'next' | 'prev') => {
-    if (isFlipping) return;
+    if (isFlipping || newPage === currentPage) return;
+    
+    // Reproducir sonido sutil y táctil de hoja de papel girando
+    playPageFlipSound();
+
     setFlipDirection(direction);
     setIsFlipping(true);
 
+    // En el cenit del giro 3D (270ms) cambiamos el contenido base
     setTimeout(() => {
       setCurrentPage(newPage);
-      setTimeout(() => {
-        setIsFlipping(false);
-        setFlipDirection(null);
-      }, 200);
-    }, 250);
-  }, [isFlipping]);
+    }, 270);
+
+    // Al completar el arco tridimensional (560ms) terminamos la transición
+    setTimeout(() => {
+      setIsFlipping(false);
+      setFlipDirection(null);
+    }, 560);
+  }, [isFlipping, currentPage]);
+
+  // Precarga predictiva en segundo plano de las láminas adyacentes
+  useEffect(() => {
+    if (!isViewingGenerated || !generatedNotebook) return;
+    const indices = [currentPage, currentPage + 1, currentPage - 1, currentPage + 2];
+    indices.forEach(idx => {
+      if (idx >= 0 && idx < generatedNotebook.plates.length) {
+        const url = generatedNotebook.plates[idx].imageUrl;
+        if (!loadedImages[url]) {
+          const img = new Image();
+          img.src = url;
+          img.onload = () => {
+            setLoadedImages(prev => ({ ...prev, [url]: true }));
+          };
+        }
+      }
+    });
+  }, [currentPage, isViewingGenerated, generatedNotebook, loadedImages]);
+
+  // Reintento automático inteligente ante cortes o demoras iniciales de red
+  const handleImageError = (url: string) => {
+    setTimeout(() => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        setLoadedImages(prev => ({ ...prev, [url]: true }));
+        setFailedImages(prev => ({ ...prev, [url]: false }));
+      };
+      img.onerror = () => {
+        setFailedImages(prev => ({ ...prev, [url]: true }));
+      };
+    }, 2000);
+  };
+
+  // Reintento manual si la imagen tardó o tuvo alguna interrupción de red
+  const handleRetryPlate = (imageUrl: string) => {
+    setFailedImages(prev => ({ ...prev, [imageUrl]: false }));
+    setLoadedImages(prev => ({ ...prev, [imageUrl]: false }));
+    const img = new Image();
+    const refreshParam = `retry=${Date.now()}`;
+    const refreshedUrl = imageUrl.includes('?') ? `${imageUrl}&${refreshParam}` : `${imageUrl}?${refreshParam}`;
+    img.src = refreshedUrl;
+    img.onload = () => {
+      setLoadedImages(prev => ({ ...prev, [imageUrl]: true }));
+    };
+    img.onerror = () => {
+      setFailedImages(prev => ({ ...prev, [imageUrl]: true }));
+    };
+  };
 
   const nextPage = useCallback(() => {
     if (currentPage < totalPages - 1) {
@@ -322,8 +383,24 @@ export const BookViewer: React.FC<BookViewerProps> = ({
           {/* Canto de encuadernación en piel/tela exterior */}
           <div className="book-hardcover-border" />
 
+          {/* HOJA VOLADORA 3D EN MOVIMIENTO DE PASO DE PÁGINA */}
+          {isFlipping && (
+            <div className={`book-turning-leaf turning-${flipDirection}`}>
+              <div className="turning-leaf-face leaf-front">
+                <div className="turning-parchment" />
+                <div className="turning-shadow" />
+                <div className="turning-specular-light" />
+              </div>
+              <div className="turning-leaf-face leaf-back">
+                <div className="turning-parchment" />
+                <div className="turning-shadow reverse" />
+                <div className="turning-specular-light reverse" />
+              </div>
+            </div>
+          )}
+
           {/* PÁGINA IZQUIERDA (VERSO): LÁMINA ILUSTRADA O MANUSCRITO ORIGINAL */}
-          <div className="book-leaf-page page-verso">
+          <div className={`book-leaf-page page-verso ${isFlipping && flipDirection === 'next' ? 'page-receiving-turn' : ''} ${isFlipping && flipDirection === 'prev' ? 'page-turning-out' : ''}`}>
             <div className="page-parchment-texture" />
             <div className="page-spine-shadow shadow-left" />
 
@@ -338,11 +415,47 @@ export const BookViewer: React.FC<BookViewerProps> = ({
               {isViewingGenerated && currentGeneratedPlate ? (
                 <div className="book-plate-paspartu">
                   <div className="book-art-frame">
+                    {/* Indicador de carga artística estilo pergamino */}
+                    {!loadedImages[currentGeneratedPlate.imageUrl] && !failedImages[currentGeneratedPlate.imageUrl] && (
+                      <div className="art-canvas-loader">
+                        <div className="loader-shimmer-bg" />
+                        <div className="canvas-loader-inner">
+                          <div className="canvas-loader-icon-glow">
+                            <Palette size={34} className="gold-icon-glow spin-gentle" />
+                          </div>
+                          <span className="canvas-loader-title">Iluminando Lámina Artística</span>
+                          <span className="canvas-loader-style">{generatedNotebook?.styleName}</span>
+                          <div className="canvas-loader-progress-track">
+                            <div className="canvas-loader-progress-bar" />
+                          </div>
+                          <span className="canvas-loader-hint">Secando acuarela y matices en alta definición...</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Estado de reintento si la red se demoró */}
+                    {failedImages[currentGeneratedPlate.imageUrl] && (
+                      <div className="art-canvas-error">
+                        <Sparkles size={28} className="gold-icon-glow" />
+                        <span className="error-title">Lámina en Espera</span>
+                        <span className="error-desc">El lienzo está tomando más tiempo del habitual en secar.</span>
+                        <button 
+                          className="btn-retry-plate"
+                          onClick={() => handleRetryPlate(currentGeneratedPlate.imageUrl)}
+                        >
+                          <History size={14} />
+                          <span>Reintentar Pincelada</span>
+                        </button>
+                      </div>
+                    )}
+
                     <img 
                       src={currentGeneratedPlate.imageUrl} 
                       alt={`Lámina ilustrada ${currentGeneratedPlate.plateNumber} de ${poema.title}`}
-                      className="book-plate-img"
+                      className={`book-plate-img ${loadedImages[currentGeneratedPlate.imageUrl] ? 'image-visible' : 'image-hidden'}`}
                       loading="eager"
+                      onLoad={() => setLoadedImages(prev => ({ ...prev, [currentGeneratedPlate.imageUrl]: true }))}
+                      onError={() => handleImageError(currentGeneratedPlate.imageUrl)}
                     />
                   </div>
                   <div className="book-plate-subcaption">
@@ -378,7 +491,7 @@ export const BookViewer: React.FC<BookViewerProps> = ({
           </div>
 
           {/* PÁGINA DERECHA (RECTO): VERSOS EN TIPOGRAFÍA POÉTICA */}
-          <div className="book-leaf-page page-recto">
+          <div className={`book-leaf-page page-recto ${isFlipping && flipDirection === 'next' ? 'page-turning-out' : ''} ${isFlipping && flipDirection === 'prev' ? 'page-receiving-turn' : ''}`}>
             <div className="page-parchment-texture" />
             <div className="page-spine-shadow shadow-right" />
 

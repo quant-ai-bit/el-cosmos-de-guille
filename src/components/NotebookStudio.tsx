@@ -51,20 +51,13 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
     setPreviewPlates([]);
 
     const baseSeed = Math.floor(Math.random() * 899999) + 100000;
-    const generatedPlates: GeneratedPlate[] = [];
     const total = poemSegments.length;
     const apiKey = getGoogleApiKey();
 
     try {
-      for (let i = 0; i < total; i++) {
-        const verse = poemSegments[i];
+      const plateDefinitions = poemSegments.map((verse, i) => {
         const plateNumber = i + 1;
         const plateSeed = baseSeed + i * 17;
-
-        setStatusMessage(`Ilustrando Página ${plateNumber} de ${total}: "${verse.slice(0, 45).replace(/\n/g, ' ')}..."`);
-        setProgressPercent(Math.round(((i) / total) * 90) + 10);
-
-        // Construir prompt único con el estilo y notas del usuario
         const prompt = buildPlatePrompt(
           verse,
           poema.title,
@@ -73,24 +66,38 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
           plateNumber,
           total
         );
+        return { verse, plateNumber, plateSeed, prompt, index: i };
+      });
 
-        // Generación con Google Imagen 3 de forma transparente
-        const { imageUrl } = await generatePlateImageSmart(prompt, plateSeed, apiKey);
+      let completedCount = 0;
+      const results: GeneratedPlate[] = new Array(total);
 
+      // Disparar las peticiones en paralelo con desfase elegante de 250ms
+      const promises = plateDefinitions.map(async (def, i) => {
+        await new Promise(res => setTimeout(res, i * 250));
+        
+        const { imageUrl } = await generatePlateImageSmart(def.prompt, def.plateSeed, apiKey);
+        
         const plate: GeneratedPlate = {
-          id: `plate-${Date.now()}-${i}`,
-          plateNumber,
+          id: `plate-${Date.now()}-${def.index}`,
+          plateNumber: def.plateNumber,
           totalPlates: total,
-          verseText: verse,
-          promptUsed: prompt,
+          verseText: def.verse,
+          promptUsed: def.prompt,
           imageUrl,
-          seed: plateSeed,
+          seed: def.plateSeed,
           timestamp: Date.now()
         };
 
-        generatedPlates.push(plate);
-        setPreviewPlates([...generatedPlates]);
-      }
+        results[def.index] = plate;
+        completedCount++;
+        setProgressPercent(Math.round((completedCount / total) * 85) + 12);
+        setStatusMessage(`Página ${completedCount} de ${total} lista: "${def.verse.slice(0, 36).replace(/\n/g, ' ')}..."`);
+        setPreviewPlates(results.filter(Boolean));
+        return plate;
+      });
+
+      const allPlates = await Promise.all(promises);
 
       setProgressPercent(100);
       setStatusMessage('¡Páginas completadas! Encuadernando el libro de colección...');
@@ -103,7 +110,7 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
         styleId: selectedStyle.id,
         styleName: selectedStyle.name,
         userNotes: userNotes.trim() ? userNotes.trim() : undefined,
-        plates: generatedPlates,
+        plates: allPlates,
         createdAt: new Date().toISOString(),
         seed: baseSeed
       };
@@ -115,7 +122,7 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
         setIsGenerating(false);
         onNotebookCreated(newNotebook);
         onClose();
-      }, 900);
+      }, 700);
 
     } catch (err) {
       console.error('Error durante la generación del cuaderno:', err);

@@ -152,16 +152,65 @@ export async function generateImageWithGoogle(prompt: string, apiKey: string): P
 }
 
 /**
+ * Sintetiza un sonido de paso de página realista usando Web Audio API
+ * No requiere descargar archivos de audio externos y responde al instante
+ */
+export function playPageFlipSound(): void {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    const duration = 0.28;
+    const bufferSize = Math.floor(ctx.sampleRate * duration);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = buffer.getChannelData(0);
+
+    // Ruido blanco suave con decaimiento natural de fricción de papel
+    for (let i = 0; i < bufferSize; i++) {
+      const progress = i / bufferSize;
+      const decay = Math.exp(-progress * 4.2);
+      output[i] = (Math.random() * 2 - 1) * decay;
+    }
+
+    const whiteNoise = ctx.createBufferSource();
+    whiteNoise.buffer = buffer;
+
+    // Filtro pasa banda para emular el crujido aterciopelado del pergamino antiguo
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1400, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(380, ctx.currentTime + duration);
+    filter.Q.value = 1.8;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+    whiteNoise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    whiteNoise.start();
+    whiteNoise.stop(ctx.currentTime + duration);
+  } catch {
+    // Ignorar si el navegador restringe el audio en segundo plano
+  }
+}
+
+/**
  * Genera la URL de la imagen en alta resolución mediante Pollinations AI con semilla única
  */
 export function generatePlateImageUrl(prompt: string, seed: number): string {
   const encoded = encodeURIComponent(prompt.trim());
-  return `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=1024&seed=${seed}&nologo=true`;
+  return `https://image.pollinations.ai/prompt/${encoded}?width=800&height=800&seed=${seed}&nologo=true`;
 }
 
 /**
- * Orquesta la generación inteligente: intenta primero con Google Imagen 3 si hay API Key,
- * o utiliza el generador libre con semilla única si no hay clave o si ocurre algún error.
+ * Orquesta la generación inteligente: intenta primero con Google AI si hay clave válida,
+ * o utiliza el generador artístico de alta definición con precalentamiento acelerado.
  */
 export async function generatePlateImageSmart(
   prompt: string,
@@ -182,9 +231,9 @@ export async function generatePlateImageSmart(
     }
   }
 
-  // Fallback con semilla única
+  // Motor artístico Pollinations con semilla única y precalentamiento rápido (4s max de espera para no bloquear)
   const fallbackUrl = generatePlateImageUrl(prompt, seed);
-  await preloadImage(fallbackUrl, 15000);
+  await preloadImage(fallbackUrl, 4500);
   return {
     imageUrl: fallbackUrl,
     engine: 'pollinations'
@@ -192,9 +241,9 @@ export async function generatePlateImageSmart(
 }
 
 /**
- * Precarga una imagen en memoria para asegurar que esté lista antes de mostrarla
+ * Precarga una imagen en memoria con tiempo de espera configurable
  */
-export function preloadImage(url: string, timeoutMs: number = 25000): Promise<void> {
+export function preloadImage(url: string, timeoutMs: number = 5000): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
     const timer = setTimeout(() => {
