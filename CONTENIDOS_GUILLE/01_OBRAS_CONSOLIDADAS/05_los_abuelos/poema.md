@@ -9,8 +9,8 @@ video_url: "https://docs.google.com/videos/d/1ByuDH2qFnbodpG7UWOCkooCUUl_PmE_OXY
 tiene_cuaderno: false
 sinopsis: "Cuando el cuerpo reposaba y el alma estaba serena, se dio la reencarnación y brotaron frutos de amor: la llegada milagrosa de los nietos transformó la quietud en vida, luz y alegría."
 ---
-
 # Los Abuelos
+
 *Por Guillermo Baena Restrepo*
 
 > Cuando el cuerpo reposaba y el alma estaba serena, se dio la reencarnación y brotaron frutos de amor: la llegada milagrosa de los nietos transformó la quietud en vida, luz y alegría.
@@ -26,8 +26,7 @@ se dio la reencarnación.
 Y del árbol de la vida
 brotaron frutos de amor.
 Aparecieron los nietos,
-un milagro
-que Dios tenía guardado
+un milagro que Dios tenía guardado
 en los libros
 del privilegio y el don,
 la más tierna descendencia

@@ -66,10 +66,10 @@ de la indiferencia.
 Repetitiva, repetitiva siempre,
 siempre repetitiva,
 siempre como el martillo duro de los días.
-Rescata y resucita los recuerdos
-de las ruinas calladas del olvido.
+Rescata y resucita los recuerdos de las ruinas calladas del olvido;
+es tal su poder
+que es capaz de elegir hasta el olvido.
 
-Es memoria, es recuerdo
+Es memoria,
+es recuerdo
 y es olvido.
-Es tal su poder de elegir
-hasta el olvido.
