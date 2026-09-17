@@ -29,6 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigateHome, onN
                 className={`nav-link ${currentView === 'home' ? 'active' : ''}`}
                 onClick={onNavigateHome}
                 style={{ background: 'none', border: 'none' }}
+                title="Poemario"
+                aria-label="Poemario"
               >
                 <BookOpen size={16} />
                 <span>Poemario</span>
@@ -39,6 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigateHome, onN
                 className={`nav-link ${currentView === 'author' ? 'active' : ''}`}
                 onClick={onNavigateAuthor}
                 style={{ background: 'none', border: 'none' }}
+                title="El Poeta"
+                aria-label="El Poeta"
               >
                 <User size={16} />
                 <span>El Poeta</span>
