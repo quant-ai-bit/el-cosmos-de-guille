@@ -503,5 +503,70 @@ export const POEMAS: Poema[] = [
       }
     ],
     "fullText": "Venía del exilio\ncon los ojos llorosos,\npor el surco de sus ojos\ndescendían sus lágrimas,\ny en sus labios sedientos\nmurmuraba el cansancio.\n\nNo sabía desde niño\nqué era el calor humano,\ny abarcaron sus brazos\nsiempre la soledad.\n\nNo sabía quién era\nni de dónde venía.\nLe decían un nombre\ny por instinto miraba.\nCaminaba sin rumbo\npor las calles desiertas.\n\nRecorría los espacios con los pies entumidos\ny tenía mucho tiempo\nsin que tiempo tuviera.\n\nIgnoraba su origen y sus antepasados,\nno sabía de afectos,\nni entendía de amores,\nno tenía en su tacto sensación del calor,\nno tenía en sus ojos\nuna imagen alegre,\nni guardaba en sus oídos\nuna nota feliz,\nno tenía en sus labios\ndibujada la risa.\n\nCaminaba descalzo como había llegado.\nUn cigarro en la boca lo ponía a soñar,\nun periódico viejo abrazaba sus lumbares\ny un pan avinagrado distraía sus fatigas.\n\nEra una sombra triste\ndibujada en la lluvia,\nuna piel calcinada\nadherida al sol,\ncon fantasmas antiguos compartía sus noches\ny temores noctámbulos alertaban su espíritu.\n\nNo sabía quién era\nni de dónde venía,\nsolo supo que un día\nse sintió en el exilio\ny en un crudo desierto transcurrieron sus días.\n\nLe sobraban preguntas\ny no habían respuestas.\n\nLo llamaban mendigo\nlas legiones humanas\ny al sentir que su alma\nse sentía cercana,\nle arrojaban con miedo\nun mendrugo de pan."
+  },
+  {
+    "id": "el-espejo",
+    "title": "El Espejo",
+    "slug": "el-espejo",
+    "subtitle": "Testigo silente, memoria fidedigna y confidente del alma",
+    "collection": "Que diría el olvido del último recuerdo",
+    "audioUrl": "/audio/el_espejo.mp3",
+    "vidsUrl": "",
+    "hasNotebook": false,
+    "notebookPages": [],
+    "synopsis": "Colgado de una puntilla de acero y una pita en la pared de la alcoba, el espejo contempla en solemne confidencia el cuerpo, los silencios, la sensualidad y los misterios de quien ama, oscilando entre la memoria de antiguos palacios y la penumbra de la complicidad humana.",
+    "scenes": [
+      {
+        "scene": 1,
+        "text": "Yo habito en el espejo de tu cuarto. Labrado en los talleres de los reyes, esculpido por cinceles maestros, tallado por manos artesanas, fui hecho para vivir colgado en las paredes entre marcos de madera y hierro, a veces salpicado por oro y por cobres.",
+        "prompt": "Cinematic realistic film, 8k, Rembrandt atmospheric warm lighting, historical artisan atelier. An ornate antique mirror with baroque carved dark mahogany wood and iron frame, delicate gold leaf and copper patina accents, reflecting soft golden dust motes in sunbeams."
+      },
+      {
+        "scene": 2,
+        "text": "He transitado por los palacios de las monarquías y los fastuosos salones de las clases burguesas. Expuesto en anticuarios, en tiendas de prendas y de empeños.",
+        "prompt": "Cinematic realistic film, 8k, vintage nostalgic atmosphere. An antique shop packed with forgotten treasures, vintage clocks, velvet armchairs, dusty crystal chandeliers, the majestic ornate mirror resting against a brick wall catching dim amber lamp reflections."
+      },
+      {
+        "scene": 3,
+        "text": "Y por fortuna un día, cuando ya agonizaba entre el silencio y la melancolía, fui rescatado por tu mano tierna y como lapa me adherí a tu vida.",
+        "prompt": "Cinematic realistic film, 8k, intimate emotional lighting. A gentle woman's tender hand touching the carved wooden frame of the mirror, wiping away decades of dust, a warm golden gleam reflecting in the glass, deep emotional intimacy and salvation."
+      },
+      {
+        "scene": 4,
+        "text": "Ahora soy el reflejo de tu propio yo, la luz de tus angustias y el compañero de todos tus desvelos. Hoy, en la pared de tu alcoba, pendo de una puntilla de acero y una pita. Soy el testigo visual de todos tus instantes.",
+        "prompt": "Cinematic realistic film, 8k, cozy twilight bedroom atmosphere. Close-up of the antique mirror hanging on a textured warm alcove wall by a rustic twine and steel nail, softly reflecting an intimate serene bedroom bathed in evening lamp glow."
+      },
+      {
+        "scene": 5,
+        "text": "Conozco tus secretos y todos tus misterios. Sé todo de tu respiración y tus suspiros. Me aprendí tu cuerpo de memoria y sé pintar tu alma con los ojos cerrados. Tengo en mis pupilas grabados tus cabellos, tus párpados, tus ojos, tu nariz y tu boca.",
+        "prompt": "Cinematic realistic film, 8k, soft poetic focus, golden hour light. Close-up reflection in the crystal mirror of a beautiful thoughtful woman gazing into her own eyes, wisps of hair catching sunlight, serene yet enigmatic expression of the soul."
+      },
+      {
+        "scene": 6,
+        "text": "Cuando callas, me duele tu silencio con un dolor de ausencia y lejanía. Cuando cantas, me llenas de alegría y tu canción hasta mi marco llega. Cuando lloras, te inundas de tristeza y tus lágrimas empañan y oscurecen mi alegría.",
+        "prompt": "Cinematic realistic film, 8k, melancholy rainy day lighting outside window. Water droplets tracing down a glass pane, mirrored reflection of a woman with a gentle tear on her cheek, the mirror surface slightly fogged with quiet breath and profound empathy."
+      },
+      {
+        "scene": 7,
+        "text": "Cuando quiero abrazarte, mi marco me limita y me contiene. En las mañanas, cuando enseñas tu rostro trajinado y más tarde lo pintas y eres otra, mi alma se transforma y se conmueve.",
+        "prompt": "Cinematic realistic film, 8k, morning soft diffused window light. A woman sitting at a vintage wooden dressing table, applying delicate makeup, looking at her mirror reflection with grace, transition from sleepy vulnerability to radiant elegance."
+      },
+      {
+        "scene": 8,
+        "text": "Y cuando juegas desnuda a la voluptuosidad y a la lujuria, se me exacerban todos los sentidos y se desbocan todos los instintos. Me recreo en las formas de tu cuerpo, en tu sensualidad y en tu erotismo, me extasío en la comisura de tus labios, en la areola de tus senos y en los ángulos obtusos de tu cuerpo.",
+        "prompt": "Cinematic realistic film, 8k, sensual chiaroscuro lighting, elegant artistic shadows, warm amber and mahogany tones. Artistic silhouette and elegant curves reflected softly in the glass, pure poetic sensuality, artistic framing, tasteful aesthetic romance."
+      },
+      {
+        "scene": 9,
+        "text": "Soy la memoria fidedigna de todos tus momentos y el fiel retrato de tiempos transcurridos. Cuando dejas la habitación en las mañanas, me invado de orfandades y silencios. Y cuando abres la puerta por las tardes, mi alma se hace inmensa e infinita.",
+        "prompt": "Cinematic realistic film, 8k, late afternoon sunset light pouring through an open doorway into the bedroom. The mirror catching the sudden brilliant golden glow as someone returns, empty silence dissolving into sudden warmth and boundless life."
+      },
+      {
+        "scene": 10,
+        "text": "Y cuando apagas la luz y somos hijos de la opacidad y de las sombras, ya no soy un espejo de los seres ni un ser de los espejos. Soy un espíritu más cautivo y viejo.",
+        "prompt": "Cinematic realistic film, 8k, deep nocturnal blue hour, faint moonlight tracing the antique carved frame. The mirror reflecting deep midnight shadows and faint stellar glimmer, peaceful eternal silence, a conscious soul resting in dark stillness."
+      }
+    ],
+    "fullText": "Yo habito en el espejo de tu cuarto.\nLabrado en los talleres de los reyes,\nesculpido por cinceles maestros,\ntallado por manos artesanas,\nfui hecho para vivir colgado en las paredes\nentre marcos de madera y hierro,\na veces salpicado por oro y por cobres.\n\nHe transitado por los palacios de las monarquías\ny los fastuosos salones de las clases burguesas.\nExpuesto en anticuarios,\nen tiendas de prendas y de empeños,\ny por fortuna un día,\ncuando ya agonizaba entre el silencio y la melancolía,\nfui rescatado por tu mano tierna\ny como lapa me adherí a tu vida.\n\nAhora soy el reflejo de tu propio yo,\nla luz de tus angustias\ny el compañero de todos tus desvelos.\n\nHoy, en la pared de tu alcoba,\npendo de una puntilla de acero y una pita.\nSoy el testigo visual de todos tus instantes.\nConozco tus secretos y todos tus misterios.\nSé todo de tu respiración y tus suspiros.\nMe aprendí tu cuerpo de memoria\ny sé pintar tu alma con los ojos cerrados.\n\nTengo en mis pupilas grabados tus cabellos,\ntus párpados, tus ojos, tu nariz y tu boca.\nCuando callas,\nme duele tu silencio con un dolor de ausencia y lejanía.\nCuando cantas,\nme llenas de alegría y tu canción hasta mi marco llega.\nCuando lloras,\nte inundas de tristeza y tus lágrimas empañan\ny oscurecen mi alegría.\nCuando quiero abrazarte,\nmi marco me limita y me contiene.\n\nEn las mañanas,\ncuando enseñas tu rostro trajinado\ny más tarde lo pintas y eres otra,\nmi alma se transforma y se conmueve.\nY cuando juegas desnuda a la voluptuosidad y a la lujuria,\nse me exacerban todos los sentidos\ny se desbocan todos los instintos.\n\nMe recreo en las formas de tu cuerpo,\nen tu sensualidad y en tu erotismo.\nMe extasío en la comisura de tus labios,\nen la areola de tus senos\ny en los ángulos obtusos de tu cuerpo.\n\nSoy la memoria fidedigna de todos tus momentos\ny el fiel retrato de tiempos transcurridos.\nCuando dejas la habitación en las mañanas,\nme invado de orfandades y silencios.\nY cuando abres la puerta por las tardes,\nmi alma se hace inmensa e infinita.\n\nY cuando apagas la luz y somos hijos de la opacidad y de las sombras,\nya no soy un espejo de los seres\nni un ser de los espejos.\nSoy un espíritu más cautivo y viejo."
   }
 ];
