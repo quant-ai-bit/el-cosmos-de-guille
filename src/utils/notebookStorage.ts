@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { GeneratedNotebook, GeneratedPlate } from '../data/notebookTypes';
+import { generatePlateImageUrl } from './aiGenerator';
 
 const STORAGE_KEY = 'cosmos_guille_generated_notebooks_v1';
 const FIRESTORE_COLLECTION = 'notebooks';
@@ -16,6 +17,25 @@ const FIRESTORE_COLLECTION = 'notebooks';
 // Cache en memoria para acceso síncrono instantáneo sin parpadeos en la UI
 let inMemoryCache: GeneratedNotebook[] | null = null;
 const listeners: Array<(notebooks: GeneratedNotebook[]) => void> = [];
+
+/**
+ * Actualiza láminas antiguas que usaban picsum.photos hacia imágenes reales de IA coherentes con el poema
+ */
+function upgradeLegacyNotebook(nb: GeneratedNotebook): GeneratedNotebook {
+  let changed = false;
+  const upgradedPlates = nb.plates.map(plate => {
+    if (plate.imageUrl && plate.imageUrl.includes('picsum.photos')) {
+      changed = true;
+      const promptToUse = plate.promptUsed || plate.verseText || nb.poemTitle;
+      return {
+        ...plate,
+        imageUrl: generatePlateImageUrl(promptToUse, plate.seed, nb.styleId)
+      };
+    }
+    return plate;
+  });
+  return changed ? { ...nb, plates: upgradedPlates } : nb;
+}
 
 export function subscribeToNotebooks(callback: (notebooks: GeneratedNotebook[]) => void): () => void {
   listeners.push(callback);
@@ -46,7 +66,8 @@ export function getCachedNotebooks(): GeneratedNotebook[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      inMemoryCache = JSON.parse(raw) as GeneratedNotebook[];
+      const parsed = JSON.parse(raw) as GeneratedNotebook[];
+      inMemoryCache = parsed.map(upgradeLegacyNotebook);
       return inMemoryCache;
     }
   } catch (err) {

@@ -67,13 +67,25 @@ export const NotebookStudio: React.FC<NotebookStudioProps> = ({
       const plateDefinitions = poemSegments.map((verse, i) => {
         const plateNumber = i + 1;
         const plateSeed = baseSeed + i * 17;
+
+        // Vincular con la escena cinematográfica del poema si existe
+        let scenePrompt = '';
+        if (poema.scenes && poema.scenes.length > 0) {
+          const sceneIndex = Math.min(
+            Math.floor((i / poemSegments.length) * poema.scenes.length),
+            poema.scenes.length - 1
+          );
+          scenePrompt = poema.scenes[sceneIndex]?.prompt || '';
+        }
+
         const prompt = buildPlatePrompt(
           verse,
           poema.title,
           selectedStyle,
           userNotes,
           plateNumber,
-          total
+          total,
+          scenePrompt
         );
         return { verse, plateNumber, plateSeed, prompt, index: i };
       });

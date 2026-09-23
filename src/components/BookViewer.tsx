@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import type { Poema } from '../data/poemas';
 import type { GeneratedNotebook } from '../data/notebookTypes';
-import { playPageFlipSound } from '../utils/aiGenerator';
+import { playPageFlipSound, generatePlateImageUrl } from '../utils/aiGenerator';
 import { exportNotebookToPdf } from '../utils/pdfExporter';
 
 interface BookViewerProps {
@@ -227,15 +227,15 @@ export const BookViewer: React.FC<BookViewerProps> = ({
     }
   };
 
-  // Desglosar versos para la página derecha con capitular dorada
+  // Desglosar versos para la página derecha con formato poético continuo y armonioso
   const formatPoeticPage = (text: string) => {
     const cleanText = text.trim();
-    if (!cleanText) return { firstLetter: 'A', firstLine: '', otherLines: [] };
-    const firstLetter = cleanText.charAt(0);
-    const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
-    const firstLine = lines[0] ? lines[0].slice(1) : '';
-    const otherLines = lines.slice(1);
-    return { firstLetter, firstLine, otherLines };
+    if (!cleanText) return { verses: [] };
+    const verses = cleanText
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean);
+    return { verses };
   };
 
   // CASO 1: NO HAY NI CUADERNO ORIGINAL NI GENERADO AÚN
@@ -287,13 +287,20 @@ export const BookViewer: React.FC<BookViewerProps> = ({
     );
   }
 
-  const { firstLetter, firstLine, otherLines } = currentGeneratedPlate 
+  const { verses } = currentGeneratedPlate 
     ? formatPoeticPage(currentGeneratedPlate.verseText)
-    : { firstLetter: 'G', firstLine: 'uillermo Baena Restrepo', otherLines: ['Manuscrito original de la obra poética.'] };
+    : { verses: ['Guillermo Baena Restrepo', 'Manuscrito original de la obra poética.'] };
 
-  const activePlateImgSrc = currentGeneratedPlate 
-    ? (retryUrls[currentGeneratedPlate.imageUrl] || currentGeneratedPlate.imageUrl)
-    : '';
+  let activePlateImgSrc = '';
+  if (currentGeneratedPlate) {
+    let rawUrl = retryUrls[currentGeneratedPlate.imageUrl] || currentGeneratedPlate.imageUrl;
+    // Si la lámina proviene del antiguo placeholder de picsum, actualizarla dinámicamente a arte de IA real
+    if (rawUrl.includes('picsum.photos')) {
+      const promptToUse = currentGeneratedPlate.promptUsed || currentGeneratedPlate.verseText || poema.title;
+      rawUrl = generatePlateImageUrl(promptToUse, currentGeneratedPlate.seed, generatedNotebook?.styleId);
+    }
+    activePlateImgSrc = rawUrl;
+  }
 
   return (
     <div className="notebook-viewer-container">
@@ -554,17 +561,26 @@ export const BookViewer: React.FC<BookViewerProps> = ({
               {/* Texto Lírico y Versos de la Página */}
               <div className="book-poetic-page-body">
                 <div className="poem-stanza-card">
-                  {/* Letra Capitular Ornamental y Primer Verso */}
-                  <div className="dropcap-row">
-                    <span className="ornamental-dropcap">{firstLetter}</span>
-                    <p className="lead-verse-line">{firstLine}</p>
+                  {/* Remate superior ornamental sutil de la estrofa */}
+                  <div className="stanza-header-ornament">
+                    <span className="ornament-leaf">❦</span>
                   </div>
 
-                  {/* Resto de versos de la página */}
-                  <div className="remaining-verses-list">
-                    {otherLines.map((line, idx) => (
-                      <p key={idx} className="poetic-verse-line">{line}</p>
+                  {/* Bloque continuo y armonioso de versos sin mutilar palabras ni letras gigantes */}
+                  <div className="poetic-verses-block">
+                    {verses.map((line, idx) => (
+                      <p 
+                        key={idx} 
+                        className={`poetic-verse-line ${idx === 0 ? 'verse-lead-line' : ''}`}
+                      >
+                        {line}
+                      </p>
                     ))}
+                  </div>
+
+                  {/* Cierre inferior sutil de la estrofa */}
+                  <div className="stanza-footer-ornament">
+                    <span className="ornament-fleuron">✦  ·  ✦</span>
                   </div>
 
                   {/* Detalle poético adicional si el usuario aportó notas */}

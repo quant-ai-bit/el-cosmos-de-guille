@@ -3,41 +3,70 @@ import type { NotebookStyle } from '../data/notebookTypes';
 /**
  * Traduce y enriquece motivos poéticos clave en español a conceptos visuales en inglés
  */
+/**
+ * Traduce y enriquece motivos poéticos clave en español a conceptos visuales en inglés
+ */
 function extractVisualKeywords(verseText: string): string {
   const lower = verseText.toLowerCase();
   const concepts: string[] = [];
 
-  // Mapeo temático de imágenes poéticas de Guillermo Baena Restrepo
-  if (lower.includes('vejez') || lower.includes('anciano') || lower.includes('abuelos') || lower.includes('edad')) {
-    concepts.push('venerable dignified elderly figure with silver hair and weathered hands');
+  // 1. Motivos de «El Espejo» (reflejos, alcoba, cristal, marco, secretos, lágrimas)
+  if (lower.includes('espejo') || lower.includes('cristal') || lower.includes('reflejo') || lower.includes('azogue') || lower.includes('marco')) {
+    concepts.push('ornate vintage baroque mirror with carved dark mahogany and antique iron frame, delicate reflections of light and soul, poetic mystery');
   }
-  if (lower.includes('memoria') || lower.includes('recuerdo') || lower.includes('olvido') || lower.includes('pasado')) {
-    concepts.push('symbolic echoes of passing time, floating clockwork, vintage mirrors, nostalgic relics');
+  if (lower.includes('alcoba') || lower.includes('cuarto') || lower.includes('pared') || lower.includes('pita') || lower.includes('puntilla') || lower.includes('habitacion')) {
+    concepts.push('intimate dimly lit vintage bedroom alcove, antique mirror hanging on rustic textured wall with warm golden ambient lamplight');
   }
-  if (lower.includes('cosmos') || lower.includes('astral') || lower.includes('molecular') || lower.includes('universo') || lower.includes('estrellas')) {
-    concepts.push('celestial cosmic stardust, nebula drifting, deep space atmospheric perspective');
+  if (lower.includes('sensualidad') || lower.includes('erotismo') || lower.includes('voluptuosidad') || lower.includes('lujuria') || lower.includes('cuerpo') || lower.includes('senos') || lower.includes('desnuda') || lower.includes('comisura')) {
+    concepts.push('tasteful classical fine art figurative silhouette, soft chiaroscuro lighting, romantic artistic curves, warm golden shadows, poetic elegance');
   }
-  if (lower.includes('tiempo') || lower.includes('reloj') || lower.includes('dias') || lower.includes('invierno') || lower.includes('nieve')) {
-    concepts.push('flowing sands of time, frosted winter chill, soft falling snow particles');
+  if (lower.includes('llanto') || lower.includes('lagrimas') || lower.includes('lloras') || lower.includes('tristeza') || lower.includes('empañan') || lower.includes('dolor') || lower.includes('ausencia') || lower.includes('legania') || lower.includes('lejanía')) {
+    concepts.push('single tear rolling down cheek, misted fogged mirror glass, soft rain droplets outside vintage window, emotional melancholic depth');
   }
-  if (lower.includes('ojos') || lower.includes('mirada') || lower.includes('rostro') || lower.includes('frente')) {
+  if (lower.includes('palacio') || lower.includes('monarquia') || lower.includes('monarquías') || lower.includes('salones') || lower.includes('burguesas') || lower.includes('anticuario') || lower.includes('empeño') || lower.includes('reyes') || lower.includes('artesanas') || lower.includes('cincel')) {
+    concepts.push('grand historical palace hall, royal artisan workshop with chisels and woodcarvings, dusty antique curiosity shop with vintage treasures');
+  }
+  if (lower.includes('mañana') || lower.includes('tarde') || lower.includes('noche') || lower.includes('sombras') || lower.includes('opacidad') || lower.includes('luz') || lower.includes('sol') || lower.includes('abres la puerta') || lower.includes('apagas la luz')) {
+    concepts.push('dramatic contrast between golden morning sunlight and deep nocturnal blue shadow, chiaroscuro atmosphere, candlelit serenity');
+  }
+
+  // 2. Motivos de «Los Abuelos» y la infancia
+  if (lower.includes('nietos') || lower.includes('abuelos') || lower.includes('cometa') || lower.includes('canicas') || lower.includes('juegos') || lower.includes('pelota') || lower.includes('infantil') || lower.includes('árbol')) {
+    concepts.push('loving elderly grandparents with small cheerful grandchildren, flying a colorful kite in a sunlit meadow, family warmth and generational joy');
+  }
+
+  // 3. Motivos de «El Mendigo» y «El Limosnero»
+  if (lower.includes('mendigo') || lower.includes('limosnero') || lower.includes('exilio') || lower.includes('desierto') || lower.includes('calle') || lower.includes('descalzo') || lower.includes('pan') || lower.includes('cigarro')) {
+    concepts.push('humble solitary wanderer with worn dark coat, walking misty cobblestone street at dawn, holding a crust of bread, quiet poetic dignity');
+  }
+
+  // 4. Motivos de «La Vejez»
+  if (lower.includes('vejez') || lower.includes('anciano') || lower.includes('arrugas') || lower.includes('canas') || lower.includes('nieve') || lower.includes('invierno') || lower.includes('edad')) {
+    concepts.push('venerable dignified elderly figure with silver-white hair and weathered hands, deep lines of wisdom, solemn golden hour lighting');
+  }
+
+  // 5. Motivos de «La Memoria»
+  if (lower.includes('memoria') || lower.includes('recuerdo') || lower.includes('olvido') || lower.includes('pasado') || lower.includes('reloj') || lower.includes('tiempo')) {
+    concepts.push('flowing hourglass sand, nostalgic vintage library, floating clockwork, antique leatherbound books, echoes of time');
+  }
+
+  // 6. Motivos de «Más Allá» y cósmicos
+  if (lower.includes('cosmos') || lower.includes('astral') || lower.includes('molecular') || lower.includes('universo') || lower.includes('estrellas') || lower.includes('infinito') || lower.includes('espiritu') || lower.includes('alma') || lower.includes('fe')) {
+    concepts.push('celestial cosmic stardust, luminous ethereal nebula drifting, deep space atmospheric perspective, soul ascending towards light');
+  }
+
+  if (lower.includes('ojos') || lower.includes('mirada') || lower.includes('rostro') || lower.includes('frente') || lower.includes('párpados')) {
     concepts.push('expressive human eyes, introspective gaze, poetic emotional depth');
   }
   if (lower.includes('manos') || lower.includes('dedos') || lower.includes('pluma') || lower.includes('cuaderno') || lower.includes('tintero')) {
     concepts.push('weathered artisan hands holding an antique quill and leather journal');
-  }
-  if (lower.includes('camino') || lower.includes('calle') || lower.includes('limosnero') || lower.includes('mendigo') || lower.includes('destierro')) {
-    concepts.push('cobblestone pathway leading towards a glowing horizon at twilight, solitary wanderer');
-  }
-  if (lower.includes('luz') || lower.includes('sol') || lower.includes('atardecer') || lower.includes('crepusculo') || lower.includes('fe')) {
-    concepts.push('ethereal shafts of golden sunlight breaking through clouds, divine illumination');
   }
   if (lower.includes('mar') || lower.includes('rio') || lower.includes('olas') || lower.includes('agua')) {
     concepts.push('calm reflective water shore, mist on the ocean horizon');
   }
 
   if (concepts.length === 0) {
-    concepts.push('profound contemplative poetic scene, serene atmosphere of memory and transcendence');
+    concepts.push('profound contemplative fine art poetic scene, serene atmosphere of memory, beauty and transcendence');
   }
 
   return concepts.join(', ');
@@ -52,17 +81,23 @@ export function buildPlatePrompt(
   style: NotebookStyle,
   userNotes?: string,
   plateIndex: number = 1,
-  totalPlates: number = 5
+  totalPlates: number = 5,
+  scenePrompt?: string
 ): string {
   const visualMotifs = extractVisualKeywords(verseText);
-  const cleanVerseSnippet = verseText.replace(/\s+/g, ' ').slice(0, 140);
+  const cleanVerseSnippet = verseText.replace(/\s+/g, ' ').slice(0, 160);
   
   const parts: string[] = [
-    style.visualPromptModifier,
-    `Poetic illustration for the work "${poemTitle}", scene ${plateIndex} of ${totalPlates}`,
-    `Visual theme: ${visualMotifs}`,
-    `Inspiration from verses: "${cleanVerseSnippet}"`
+    style.visualPromptModifier
   ];
+
+  if (scenePrompt && scenePrompt.trim().length > 0) {
+    parts.push(`Scene composition: ${scenePrompt.trim()}`);
+  } else {
+    parts.push(`Visual theme: ${visualMotifs}`);
+  }
+
+  parts.push(`Poetic inspiration from "${poemTitle}", scene ${plateIndex} of ${totalPlates}: "${cleanVerseSnippet}"`);
 
   if (userNotes && userNotes.trim().length > 0) {
     parts.push(`User custom artistic direction: ${userNotes.trim()}`);
@@ -202,18 +237,33 @@ export function playPageFlipSound(): void {
 }
 
 /**
- * Genera la URL de la imagen en alta definición con semilla única y CDN ultra-rápido garantizado
+ * Genera la URL de la imagen en alta definición coherente con el poema utilizando Inteligencia Artificial real
  */
-export function generatePlateImageUrl(_prompt: string, seed: number, styleId?: string): string {
+export function generatePlateImageUrl(prompt: string, seed: number, styleId?: string): string {
+  let enrichedPrompt = prompt;
   if (styleId === 'grabado-madera') {
-    return `https://picsum.photos/seed/${seed}/800/800?grayscale`;
+    enrichedPrompt = `antique woodcut etching engraving illustration, cross-hatching line art, black and white sepia ink, ${prompt}`;
+  } else if (styleId === 'acuarela-lirica') {
+    enrichedPrompt = `delicate fine art watercolor and sepia ink wash on raw cotton paper, soft wet-on-wet watercolor blooming edges, ${prompt}`;
+  } else if (styleId === 'oleo-barroco') {
+    enrichedPrompt = `classical baroque oil painting, dramatic chiaroscuro, Rembrandt lighting, rich impasto canvas texture, ${prompt}`;
+  } else if (styleId === 'cine-vintage') {
+    enrichedPrompt = `cinematic 35mm film still, warm golden hour twilight, vintage analog film grain, ${prompt}`;
+  } else if (styleId === 'cosmico-mistico') {
+    enrichedPrompt = `surreal cosmic fine art, celestial stardust nebulae, mystical spiritual glowing atmosphere, ${prompt}`;
   }
-  return `https://picsum.photos/seed/${seed}/800/800`;
+
+  const cleanPrompt = enrichedPrompt
+    .replace(/[^\w\s,.-]/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const encoded = encodeURIComponent(cleanPrompt.slice(0, 420));
+  return `https://image.pollinations.ai/prompt/${encoded}?width=800&height=800&seed=${seed}&nologo=true`;
 }
 
 /**
  * Genera la lámina utilizando Google Gemini Image si hay clave con cuota disponible,
- * o el motor artístico con CDN ultra-rápido que nunca falla ni devuelve errores 429.
+ * o el motor de Inteligencia Artificial Pollinations (Flux/SANA) coherente con el poema.
  */
 export async function generatePlateImage(
   prompt: string,
@@ -237,12 +287,12 @@ export async function generatePlateImage(
     }
   }
 
-  // 2. Motor visual instantáneo de alta fidelidad vía Fastly CDN con semilla única
-  const fastUrl = generatePlateImageUrl(prompt, safeSeed, styleId);
+  // 2. Generación con IA generativa real coherente con el poema
+  const aiUrl = generatePlateImageUrl(prompt, safeSeed, styleId);
 
   return {
-    imageUrl: fastUrl,
-    engine: 'fine-art-cdn'
+    imageUrl: aiUrl,
+    engine: 'pollinations-ai'
   };
 }
 

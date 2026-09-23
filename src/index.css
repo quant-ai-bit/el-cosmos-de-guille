@@ -2447,56 +2447,78 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 1rem 0;
+  align-items: center;
+  padding: 1.25rem 0.5rem;
 }
 
 .poem-stanza-card {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
 }
 
-/* Letra Capitular Ornamental */
-.dropcap-row {
+/* Remates ornamentales sutiles de la estrofa */
+.stanza-header-ornament {
+  margin-bottom: 1.2rem;
+  opacity: 0.55;
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 0.4rem;
+  justify-content: center;
 }
 
-.ornamental-dropcap {
-  font-family: var(--font-display);
-  font-size: 4.5rem;
-  line-height: 0.85;
+.stanza-header-ornament .ornament-leaf {
+  font-size: 1.15rem;
   color: #9d752c;
-  float: left;
-  margin-right: 0.6rem;
-  margin-bottom: -0.2rem;
-  font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+  filter: drop-shadow(0 1px 2px rgba(157, 117, 44, 0.2));
 }
 
-.lead-verse-line {
-  font-family: var(--font-poem);
-  font-size: 1.35rem;
-  font-style: italic;
-  color: #211c18;
-  line-height: 1.6;
-  margin-top: 0.4rem;
-}
-
-.remaining-verses-list {
+/* Bloque armónico de versos completos */
+.poetic-verses-block {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 0.2rem;
+  gap: 0.55rem;
+  width: 100%;
+  text-align: left;
+  padding: 0 1rem;
 }
 
 .poetic-verse-line {
   font-family: var(--font-poem);
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-style: italic;
-  color: #26201b;
-  line-height: 1.65;
+  font-weight: 400;
+  color: #2c241c;
+  line-height: 1.75;
+  letter-spacing: 0.015em;
   margin: 0;
+  text-shadow: 0 0 1px rgba(44, 36, 28, 0.08);
+}
+
+/* Letra inicial poética: sobria, estética y perfectamente integrada al verso */
+.poetic-verse-line.verse-lead-line::first-letter {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-style: normal;
+  font-weight: 600;
+  color: #9d752c;
+  line-height: 1;
+  padding-right: 0.12rem;
+  text-shadow: 1px 1px 2px rgba(157, 117, 44, 0.2);
+}
+
+.stanza-footer-ornament {
+  margin-top: 1.2rem;
+  opacity: 0.45;
+  display: flex;
+  justify-content: center;
+}
+
+.stanza-footer-ornament .ornament-fleuron {
+  font-size: 0.85rem;
+  letter-spacing: 0.35rem;
+  color: #9d752c;
 }
 
 /* Cierre poético y firma */
