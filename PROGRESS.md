@@ -30,6 +30,17 @@
 
 ---
 
+## 2026-10-03 13:00 (COT) — Reproductor de Video 100% Nativo en la Web (Sin Enlaces Externos a Google Videos)
+**Plataforma:** Antigravity
+**Tipo:** ✨ Mejora | 🎬 Multimedia | 🎨 UI/UX
+
+- Modificación de VideoPlayer.tsx para que las películas poéticas se visualicen y reproduzcan exclusivamente dentro de la página:
+  - Se eliminó el botón externo «Reproducir en Google Vids (HD)» y cualquier enlace a Google Videos.
+  - El reproductor incrustado se carga de forma directa y nativa en el contenedor cinematográfico de proporción 16:9 con marco dorado sutil.
+  - La reproducción ocurre al 100% dentro del sitio sin redirigir al visitante a Google Vids.
+  - Para las obras sin video (*El Espejo*), se preserva la tarjeta estética de *«Película en Producción»*.
+- Verificación visual mediante subagente de navegador confirmando reproducción inmersiva en página.
+
 ## 2026-10-03 12:37 (COT) — Eliminación del Audio de 12 Minutos e Integración Definitiva del Video de 'La Memoria'
 **Plataforma:** Antigravity
 **Tipo:** 🐛 Corrección | 🎬 Multimedia | 🧹 Limpieza
