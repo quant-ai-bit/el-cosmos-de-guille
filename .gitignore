@@ -27,3 +27,6 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Audio backups
+*_original_con_*.mp3

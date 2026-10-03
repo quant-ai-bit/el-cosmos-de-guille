@@ -22,6 +22,7 @@ Este documento es el centro de control editorial y técnico. Cada vez que subas 
 | **PROP-004** | 2026-09-13 | Google Drive | **Saneamiento de Duplicados en Raíz**: Verificación por hash SHA-256 de los 3 archivos idénticos. Se preservó el máster `Guille Baena más acá y memoria.m4a` y se eliminaron los clones duplicados. | Espacio y organización limpios en Google Drive y respaldo en `00_INBOX_VARIOS/audios_brutos`. | ✅ PUBLICADO |
 | **PROP-005** | 2026-09-13 | Google Drive | **Catalogación de 'El río corre hacia atrás'**: Obra de don Benjamín Baena Hoyos (padre de Guillermo). Se resguardó en inventario interno sin publicarse a la web. | `00_INBOX_VARIOS/el_rio_corre_hacia_atras_benjamin_baena/INVENTARIO_OBRA.md`. | ✅ PUBLICADO |
 | **PROP-006** | 2026-09-13 | Google Drive | **Estructuración de las 6 Obras de 'Que diría el olvido del último recuerdo'**: Creación de `poema.md` para cada obra con texto completo, sinopsis, escenas y prompts cinematográficos. | `01_OBRAS_CONSOLIDADAS/` (La Vejez, La Memoria, Más Allá, El Limosnero, Los Abuelos, El Mendigo). | ✅ PUBLICADO |
+| **PROP-007** | 2026-10-03 | Google Vids | **Auditoría y Corrección de Películas en Google Vids**: Saneamiento de enlace duplicado en 'Más Acá' (que apuntaba a 'La Memoria'), retiro de falso video local .mp4 (audio aac sin video) y blindaje de visualizador para obras pendientes de enlace ('Más Acá' y 'El Espejo'). | Módulos `src/data/poemas.ts`, `src/components/VideoPlayer.tsx` y `src/App.tsx`. | ✅ PUBLICADO |
 
 ---
 

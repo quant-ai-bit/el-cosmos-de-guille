@@ -195,7 +195,6 @@ export const POEMAS: Poema[] = [
     "collection": "Que diría el olvido del último recuerdo",
     "audioUrl": "/audio/la_memoria.mp3",
     "vidsUrl": "https://docs.google.com/videos/d/1Nyntz2nF6zjUesamKDytBywgSG7vgx3IXYfvfkrk26Q/play?usp=sharing",
-    "localVideoUrl": "/videos/mas_aca_y_memoria.mp4",
     "hasNotebook": true,
     "notebookPages": [
       "/cuaderno/memoria_p1.jpg",
@@ -213,8 +212,7 @@ export const POEMAS: Poema[] = [
     "subtitle": "Polvo molecular, arena cósmica y el enigma del ser",
     "collection": "Que diría el olvido del último recuerdo",
     "audioUrl": "/audio/mas_alla.mp3",
-    "vidsUrl": "https://docs.google.com/videos/d/1Nyntz2nF6zjUesamKDytBywgSG7vgx3IXYfvfkrk26Q/play?usp=sharing",
-    "localVideoUrl": "/videos/mas_aca_y_memoria.mp4",
+    "vidsUrl": "https://docs.google.com/videos/d/14nYrpsJNaUjqzpeWpy5pUv7Ana0MXQgHK_Af3wF65KA/play?usp=sharing",
     "hasNotebook": true,
     "notebookPages": [
       "/cuaderno/mas_aca_p1.jpg",

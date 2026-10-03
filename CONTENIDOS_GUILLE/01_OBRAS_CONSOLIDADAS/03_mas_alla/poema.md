@@ -5,7 +5,7 @@ slug: "mas-aca"
 subtitulo: "Polvo molecular, arena cósmica y el enigma del ser"
 coleccion: "Que diría el olvido del último recuerdo"
 audio_web: "/audio/mas_alla.mp3"
-video_url: "https://docs.google.com/videos/d/1Nyntz2nF6zjUesamKDytBywgSG7vgx3IXYfvfkrk26Q/play?usp=sharing"
+video_url: "https://docs.google.com/videos/d/14nYrpsJNaUjqzpeWpy5pUv7Ana0MXQgHK_Af3wF65KA/play?usp=sharing"
 tiene_cuaderno: true
 sinopsis: "Una travesía poética antes del nacimiento: la danza entre la nada finita y el todo infinito en el cosmos de la materia."
 ---

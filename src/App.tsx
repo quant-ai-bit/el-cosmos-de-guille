@@ -215,10 +215,12 @@ export function App() {
                               Cuaderno
                             </span>
                           )}
-                          <span className="badge-tag has-video">
-                            <Film size={11} />
-                            Video
-                          </span>
+                          {(poema.vidsUrl || poema.localVideoUrl) && (
+                            <span className="badge-tag has-video">
+                              <Film size={11} />
+                              Video
+                            </span>
+                          )}
                         </div>
                       </div>
 
